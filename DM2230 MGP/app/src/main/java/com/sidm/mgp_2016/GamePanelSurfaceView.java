@@ -187,7 +187,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         canvas.drawBitmap(ship[shipIndex], mX, mY, null);
 
         // Week 7 Render FPS
-        RenderTextonScreen(canvas,"FPS: " + FPS, 130, 75, 30);
+        RenderTextOnScreen(canvas,"FPS: " + FPS, 130, 75, 30);
 
         // Draw sprite
         stone_anim.draw(canvas);
@@ -199,7 +199,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     }
 
     // Week 7 Print text on screen
-    public void RenderTextonScreen (Canvas canvas, String text, int posX, int posY, int textsize)
+    public void RenderTextOnScreen (Canvas canvas, String text, int posX, int posY, int textsize)
     {
         if (canvas != null && text.length() != 0)
         {
