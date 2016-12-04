@@ -4,7 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
-public class SpriteAnimation {
+public class SpriteAnimation
+{
 
     private Bitmap bitmap; // the animation sequence
     private Rect sourceRect; // the rectangle to be drawn from the animation bitmap
@@ -19,7 +20,8 @@ public class SpriteAnimation {
     private int x; // the X coordinate of the object (top left of the image)
     private int y; // the Y coordinate of the object (top left of the image)
 
-    public SpriteAnimation(Bitmap bitmap, int x, int y, int fps, int frameCount) {
+    public SpriteAnimation(Bitmap bitmap, int x, int y, int fps, int frameCount)
+    {
         this.bitmap = bitmap;
         this.x = x;
         this.y = y;
@@ -104,12 +106,15 @@ public class SpriteAnimation {
         this.y = y;
     }
 
-    public void update(long gameTime) {
-        if (gameTime > frameTicker + framePeriod) {
+    public void update(long gameTime)
+    {
+        if (gameTime > frameTicker + framePeriod)
+        {
             frameTicker = gameTime;
             // increment the frame
             currentFrame++;
-            if (currentFrame >= frame) {
+            if (currentFrame >= frame)
+            {
                 currentFrame = 0;
             }
         }
@@ -118,7 +123,8 @@ public class SpriteAnimation {
         this.sourceRect.right = this.sourceRect.left + spriteWidth;
     }
 
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas)
+    {
         // where to draw the sprite
         Rect destRect = new Rect(getX(), getY(), getX() + spriteWidth, getY()
                 + spriteHeight);

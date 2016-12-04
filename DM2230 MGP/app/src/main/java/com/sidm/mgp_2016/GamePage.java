@@ -8,10 +8,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 
-public class GamePage extends Activity {
-
+public class GamePage extends Activity
+{
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
        // Hide App Title Bar and Menu Top Bar
         requestWindowFeature(Window.FEATURE_NO_TITLE);

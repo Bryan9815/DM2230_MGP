@@ -9,11 +9,13 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.view.View.OnClickListener;
 
-public class Options extends Activity implements OnClickListener {
+public class Options extends Activity implements OnClickListener
+{
 
     private Button Btn_Return;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         // Hide App Title Bar and Menu Top Bar
@@ -37,6 +39,4 @@ public class Options extends Activity implements OnClickListener {
         }
         startActivity(i);
     }
-
-
 }

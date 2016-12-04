@@ -7,13 +7,15 @@ import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class SplashPage extends Activity {
+public class SplashPage extends Activity
+{
 
     boolean Active = true;
     int SplashTime = 5000;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         // Hide App Title Bar and Menu Top Bar
@@ -28,22 +30,26 @@ public class SplashPage extends Activity {
         Thread splashTread = new Thread() {
             @Override
             public void run() {
-                try {
+                try
+                {
                     int waited = 0;
-                    while(Active && (waited < SplashTime)) {
+                    while(Active && (waited < SplashTime))
+                    {
                         sleep(200);
-                        if(Active) {
+                        if(Active)
+                        {
                             waited += 200;
                         }
                     }
-                } catch(InterruptedException e) {
+                } catch(InterruptedException e)
+                {
                     //do nothing
-                } finally {
+                } finally
+                {
                     finish();
                     //Create new activity based on and intent with CurrentActivity
                     Intent intent = new Intent(SplashPage.this, MainMenu.class);
                     startActivity(intent);
-
                 }
             }
         };
@@ -51,11 +57,12 @@ public class SplashPage extends Activity {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event){
-        if(event.getAction() == MotionEvent.ACTION_DOWN){
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        if(event.getAction() == MotionEvent.ACTION_DOWN)
+        {
             Active = false;
         }
         return true;
     }
-
 }
