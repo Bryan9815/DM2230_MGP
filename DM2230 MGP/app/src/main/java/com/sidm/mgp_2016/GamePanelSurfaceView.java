@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -16,8 +17,7 @@ import android.graphics.Paint;
 
 import java.util.Random;
 
-public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.Callback
-{
+public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
     // Implement this interface to receive information about changes to the surface.
 
     protected static final String TAG = null;
@@ -28,7 +28,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private Bitmap bg, scaledbg;
 
     //Stone Animation
-    private SpriteAnimation stone_anim;
+    //private SpriteAnimation stone_anim;
 
     int ScreenWidth, ScreenHeight;
 
@@ -55,13 +55,15 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     //Week 7 to move move ship
     private boolean moveShip = false;
 
-    //constructor for this GamePanelSurfaceView class
-    public GamePanelSurfaceView(Context context)
+    private boolean Button_active;
+    private Bitmap Button_bitmap, Button_Background;
+
+    private Bitmap create_BitMap(int img, int scale_x, int scale_y)
     {
-
-        // Context is the current state of the application/object
-        super(context);
-
+        return Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), img),scale_x,scale_y,true);
+    }
+    private void Standard_Init(Context context)
+    {
         // Adding the callback (this) to the surface holder to intercept events
         getHolder().addCallback(this);
 
@@ -74,6 +76,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         bg = BitmapFactory.decodeResource(getResources(), R.drawable.gamescene);
         scaledbg = Bitmap.createScaledBitmap(bg, (int) (ScreenWidth), (int) (ScreenHeight), true);
 
+
         // 7) Load the images of the spaceships
         ship[0] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_1)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
         ship[1] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_2)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
@@ -82,12 +85,24 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         // Week 7 Load images for Flying Stone animation
         //stone_anim = new SpriteAnimation(Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.flystar)), (int) (ScreenWidth)/4, (int) (ScreenHeight)/10, true), 320, 64, 5, 5);
-
         // Create the game loop thread
         myThread = new GameThread(getHolder(), this);
-
         // Make the GamePanel focusable so it can handle events
         setFocusable(true);
+    }
+    private void Button_Init()
+    {
+        Button_active = true;
+        Button_bitmap = create_BitMap(R.drawable.blue_button,ScreenWidth/5,ScreenWidth/5);
+        Button_Background = create_BitMap(R.drawable.button_background,ScreenWidth,ScreenHeight);
+    }
+    //constructor for this GamePanelSurfaceView class
+    public GamePanelSurfaceView(Context context)
+    {
+        // Context is the current state of the application/object
+        super(context);
+        Standard_Init(context);
+        Button_Init();
     }
 
     //must implement inherited abstract methods
@@ -101,7 +116,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             myThread.start();
         }
     }
-
     public void surfaceDestroyed(SurfaceHolder holder)
     {
         boolean retry = true;
@@ -125,12 +139,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             }
         }
     }
-
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
     {
 
     }
-
 
     //public void update(){
     public void update(float dt, float fps)
@@ -172,7 +184,18 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         }
     }
-
+    public void RenderBubbles(Canvas canvas)
+    {
+        if (Button_active == true)
+        {
+            canvas.drawBitmap(Button_bitmap,ScreenWidth/2,ScreenHeight/2,null);
+            canvas.drawBitmap(Button_bitmap,(ScreenWidth/2) - (ScreenWidth/5),ScreenHeight/2,null);
+        }
+        else
+        {
+            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        }
+    }
     public void RenderGameplay(Canvas canvas)
     {
         // 3) Re-draw 2nd image after the 1st image ends
@@ -180,14 +203,14 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         {
             return;
         }
-        canvas.drawBitmap(scaledbg, bgX, bgY, null);
+        /*canvas.drawBitmap(scaledbg, bgX, bgY, null);
         canvas.drawBitmap(scaledbg, bgX + ScreenWidth, bgY, null);
 
         // 8) Draw the spaceships
         canvas.drawBitmap(ship[shipIndex], mX, mY, null);
 
         // Week 7 Render FPS
-        RenderTextOnScreen(canvas,"FPS: " + FPS, 130, 75, 30);
+
 
         // Draw sprite
         stone_anim.draw(canvas);
@@ -195,9 +218,13 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         //Week 7
         //Edit after adding collision onTouch event & comment code above  -- stone_anim.setY(600);
         stone_anim.setX(aX);
-        stone_anim.setY(aY);
-    }
+        stone_anim.setY(aY);*/
 
+        RenderBubbles(canvas);
+
+        //FPS
+        RenderTextOnScreen(canvas,"FPS: " + FPS, 130, 75, 30);
+    }
     // Week 7 Print text on screen
     public void RenderTextOnScreen (Canvas canvas, String text, int posX, int posY, int textsize)
     {
@@ -227,7 +254,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
         return false;
     }
-
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
@@ -240,13 +266,15 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         switch(action)
         {
             case MotionEvent.ACTION_DOWN:
-                if (CheckCollision(mX, mY, ship[shipIndex].getWidth(), ship[shipIndex].getHeight(), X, Y, 0, 0))
+                if (CheckCollision(ScreenWidth/2,ScreenHeight/2, ScreenWidth/5,ScreenWidth/5, X, Y, 0, 0))
                 {
-                    moveShip = true;
-                } else
-                {
-                    moveShip = false;
+                    Button_active = false;
                 }
+                if (CheckCollision((ScreenWidth/2) - (ScreenWidth/5),ScreenHeight/2, ScreenWidth/5,ScreenWidth/5, X, Y, 0, 0))
+                {
+                    Button_active = false;
+                }
+
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (moveShip == true)
@@ -256,13 +284,13 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     mY = (short) (Y - ship[shipIndex].getHeight() / 2);
                 }
                 //Check if ship and stone collide
-                if (CheckCollision(mX, mY, ship[shipIndex].getWidth(), ship[shipIndex].getHeight(), aX, aY, stone_anim.getSpriteWidth(), stone_anim.getSpriteHeight()))
+                /*if (CheckCollision(mX, mY, ship[shipIndex].getWidth(), ship[shipIndex].getHeight(), aX, aY, stone_anim.getSpriteWidth(), stone_anim.getSpriteHeight()))
                 {
                     Random random = new Random();
 
                     aX = random.nextInt(ScreenWidth-50);
                     aY = random.nextInt(ScreenHeight-50);
-                }
+                }*/
                 break;
 
             case MotionEvent.ACTION_UP:
@@ -270,4 +298,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 break;
         }return true;
     }
+
+
 }
