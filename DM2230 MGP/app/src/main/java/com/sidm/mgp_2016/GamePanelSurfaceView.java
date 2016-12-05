@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -42,6 +43,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     // Paint object
     Paint paint = new Paint();
+
+    // Font
+    Typeface Font;
 
     private short bgX = 0, bgY = 0;
 
@@ -94,6 +98,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         ship[1] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_2)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
         ship[2] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_3)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
         ship[3] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_4)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
+
+        // Font
+        Font.createFromAsset(getContext().getAssets(), "fonts/ITCBLKAD.TTF");
 
         // Week 7 Load images for Flying Stone animation
         //stone_anim = new SpriteAnimation(Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.flystar)), (int) (ScreenWidth)/4, (int) (ScreenHeight)/10, true), 320, 64, 5, 5);
@@ -261,9 +268,12 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         if (canvas != null && text.length() != 0)
         {
             Paint paint = new Paint();
+
             paint.setARGB(255, 1, 1, 1);
             paint.setStrokeWidth(100);
             paint.setTextSize(textsize);
+            paint.setTypeface(Font);
+
             canvas.drawText(text, posX, posY, paint);
         }
     }
