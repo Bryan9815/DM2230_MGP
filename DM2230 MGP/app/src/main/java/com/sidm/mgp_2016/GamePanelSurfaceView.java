@@ -14,8 +14,11 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.graphics.Paint;
+import android.os.Vibrator;
+
 
 import java.util.Random;
+import java.util.Vector;
 
 public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
     // Implement this interface to receive information about changes to the surface.
@@ -55,8 +58,17 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     //Week 7 to move move ship
     private boolean moveShip = false;
 
+    //Button variables
     private boolean Button_active;
     private Bitmap Button_bitmap, Button_Background;
+    private Vector<Bubble> ListOfBubbles;
+    //Score
+    private int Score;
+
+    //Touch position
+    private short touch_x,touch_y;
+
+    Vibrator v;
 
     private Bitmap create_BitMap(int img, int scale_x, int scale_y)
     {
@@ -89,12 +101,26 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         myThread = new GameThread(getHolder(), this);
         // Make the GamePanel focusable so it can handle events
         setFocusable(true);
+
+        Score = 0;
+
+        v = (Vibrator) this.getContext().getSystemService(Context.VIBRATOR_SERVICE);
     }
     private void Button_Init()
     {
         Button_active = true;
         Button_bitmap = create_BitMap(R.drawable.blue_button,ScreenWidth/5,ScreenWidth/5);
         Button_Background = create_BitMap(R.drawable.button_background,ScreenWidth,ScreenHeight);
+
+        //Create Bubbles
+        ListOfBubbles = new Vector<Bubble>();
+        Bubble NewBubble = new Bubble();
+        ListOfBubbles.add(NewBubble);
+
+        for (int i = 0; i < ListOfBubbles.size(); i++)
+        {
+            ListOfBubbles.get(i).Init();
+        }
     }
     //constructor for this GamePanelSurfaceView class
     public GamePanelSurfaceView(Context context)
@@ -184,16 +210,17 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         }
     }
+    public void RenderScore(Canvas canvas)
+    {
+        RenderTextOnScreen(canvas,"Score: " + Integer.toString(Score),130, 105, 30);
+    }
     public void RenderBubbles(Canvas canvas)
     {
+        canvas.drawBitmap(Button_Background,0,0,null);
         if (Button_active == true)
         {
             canvas.drawBitmap(Button_bitmap,ScreenWidth/2,ScreenHeight/2,null);
             canvas.drawBitmap(Button_bitmap,(ScreenWidth/2) - (ScreenWidth/5),ScreenHeight/2,null);
-        }
-        else
-        {
-            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         }
     }
     public void RenderGameplay(Canvas canvas)
@@ -203,6 +230,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         {
             return;
         }
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         /*canvas.drawBitmap(scaledbg, bgX, bgY, null);
         canvas.drawBitmap(scaledbg, bgX + ScreenWidth, bgY, null);
 
@@ -221,9 +249,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         stone_anim.setY(aY);*/
 
         RenderBubbles(canvas);
-
+        RenderScore(canvas);
         //FPS
         RenderTextOnScreen(canvas,"FPS: " + FPS, 130, 75, 30);
+        //Touch position
+        RenderTextOnScreen(canvas,"X: " + Short.toString(touch_x) + "Y:" + Short.toString(touch_y),130, 145, 30);
     }
     // Week 7 Print text on screen
     public void RenderTextOnScreen (Canvas canvas, String text, int posX, int posY, int textsize)
@@ -231,7 +261,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         if (canvas != null && text.length() != 0)
         {
             Paint paint = new Paint();
-            paint.setARGB(255, 0, 0, 0);
+            paint.setARGB(255, 1, 1, 1);
             paint.setStrokeWidth(100);
             paint.setTextSize(textsize);
             canvas.drawText(text, posX, posY, paint);
@@ -259,20 +289,28 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     {
         int action = event.getAction();// Check for the action of touch
 
-        short X = (short) event.getX();
-        short Y = (short) event.getY();
+        short X = touch_x = (short) event.getX();
+        short Y = touch_y = (short) event.getY();
+
 
 
         switch(action)
         {
             case MotionEvent.ACTION_DOWN:
-                if (CheckCollision(ScreenWidth/2,ScreenHeight/2, ScreenWidth/5,ScreenWidth/5, X, Y, 0, 0))
+                if (CheckCollision(ScreenWidth/2,ScreenHeight/2, ScreenWidth/5,ScreenWidth/5, X, Y, 0, 0) && Button_active)
                 {
                     Button_active = false;
+                    Score += 2;
+
+                    // Vibrate for 500 milliseconds
+                    //v.vibrate(500);
+
                 }
-                if (CheckCollision((ScreenWidth/2) - (ScreenWidth/5),ScreenHeight/2, ScreenWidth/5,ScreenWidth/5, X, Y, 0, 0))
+                if (CheckCollision((ScreenWidth/2) - (ScreenWidth/5),ScreenHeight/2, ScreenWidth/5,ScreenWidth/5, X, Y, 0, 0)&& Button_active)
                 {
                     Button_active = false;
+                    Score += 2;
+                    //v.vibrate(500);
                 }
 
                 break;
@@ -298,6 +336,18 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 break;
         }return true;
     }
+    private class Bubble
+    {
+        short Position_x ,Position_y, Scale;
+        boolean Active;
+        //Bubble[] Linked_Bubbles;
 
-
+        public void Init()
+        {
+            Position_x = (short)(ScreenWidth/2);
+            Position_y = (short)(ScreenHeight/2);
+            Active = true;
+            Scale = (short)(ScreenWidth/5);
+        }
+    }
 }
