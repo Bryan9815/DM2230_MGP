@@ -1,13 +1,10 @@
 package com.sidm.mgp_2016;
 
-/**
- * Created by Alienware Pc on 021, 21-Nov-2016.
- */
-
 import android.view.SurfaceHolder;
 import android.graphics.Canvas;
 
-public class GameThread extends Thread {
+public class GameThread extends Thread
+{
     // The actual view that handles inputs and draws to the surface
     private GamePanelSurfaceView myView;
 
@@ -27,7 +24,8 @@ public class GameThread extends Thread {
     float dt;
 
     // Constructor for this class
-    public GameThread(SurfaceHolder holder, GamePanelSurfaceView myView){
+    public GameThread(SurfaceHolder holder, GamePanelSurfaceView myView)
+    {
         super(); // super() is used to invoke immediate parent class constructor.
         isRun = true; // for running
         isPause = false; // for pause
@@ -39,14 +37,18 @@ public class GameThread extends Thread {
         isRun = r;
     }
 
-    public void pause(){
-        synchronized (holder) {
+    public void pause()
+    {
+        synchronized (holder)
+        {
             isPause = true;
         }
     }
 
-    public void unPause(){
-        synchronized (holder) {
+    public void unPause()
+    {
+        synchronized (holder)
+        {
             isPause = false;
             holder.notifyAll();
         }
@@ -74,14 +76,19 @@ public class GameThread extends Thread {
     }
 
     @Override
-    public void run(){
-        while (isRun){
+    public void run()
+    {
+        while (isRun)
+        {
             //Update game state and render state to the screen
             Canvas c = null;
-            try {
+            try
+            {
                 c = this.holder.lockCanvas();
-                synchronized(holder){
-                    if (myView != null){
+                synchronized(holder)
+                {
+                    if (myView != null)
+                    {
                         if (getPause() == false)
                         {
                             myView.update(dt, fps);
@@ -89,23 +96,29 @@ public class GameThread extends Thread {
                         }
                     }
                 }
-                synchronized(holder){
-                    while (getPause()==true){
-                        try {
+                synchronized(holder)
+                {
+                    while (getPause()==true)
+                    {
+                        try
+                        {
                             holder.wait();
-                        } catch (InterruptedException e) {
+                        } catch (InterruptedException e)
+                        {
+
                         }
                     }
                 }
             }
 
-            finally{
-                if (c!=null){
+            finally
+            {
+                if (c!=null)
+                {
                     holder.unlockCanvasAndPost(c);
                 }
             }
             calculateFPS();
         }
-
     }
 }

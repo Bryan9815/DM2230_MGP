@@ -9,12 +9,13 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.view.View.OnClickListener;
 
-public class MainMenu extends Activity implements OnClickListener{
-
+public class MainMenu extends Activity implements OnClickListener
+{
     private Button Btn_Start;
     private Button Btn_Options;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         // Hide App Title Bar and Menu Top Bar
