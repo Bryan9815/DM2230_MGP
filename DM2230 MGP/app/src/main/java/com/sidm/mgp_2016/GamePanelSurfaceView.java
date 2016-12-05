@@ -54,19 +54,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     private int aX = 300, aY = 300;
 
-    // 5) bitmap array to stores 4 images of the spaceship
-    private Bitmap[] ship = new Bitmap[4];
-
-    // 6) Variable as an index to keep track of the spaceship images
-    private short shipIndex = 0;
-
-    //Week 7 to move move ship
-    private boolean moveShip = false;
-
     //Button variables
     private boolean Button_active;
     private Bitmap Button_bitmap, Button_Background;
     private Vector<Bubble> ListOfBubbles;
+    private float timer = 0;
 
     //Score
     private int Score;
@@ -114,13 +106,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         bg = BitmapFactory.decodeResource(getResources(), R.drawable.gamescene);
         scaledbg = Bitmap.createScaledBitmap(bg, (int) (ScreenWidth), (int) (ScreenHeight), true);
 
-
-        // 7) Load the images of the spaceships
-        ship[0] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_1)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
-        ship[1] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_2)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
-        ship[2] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_3)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
-        ship[3] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_4)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
-
         // Font
         Font = Typeface.createFromAsset(getContext().getAssets(), "fonts/cambriaz.ttf");
 
@@ -133,8 +118,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         Score = 0;
 
-        v = (Vibrator) this.getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        v = (Vibrator) this.getContext().getSystemService(Context.VIBRATOR_SERVICE); // Done by Guan Hui
     }
+
     private void Button_Init()
     {
         Button_active = true;
@@ -151,10 +137,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             ListOfBubbles.get(i).Init();
         }
     }
-    private void Spawn_Bubbles()
-    {
 
-    }
     //constructor for this GamePanelSurfaceView class
     public GamePanelSurfaceView(Context context)
     {
@@ -218,12 +201,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 {
                     bgX = 0;
                 }
-                // 9) Update the spaceship images / shipIndex so that the animation will occur.
-                shipIndex++;
-                shipIndex %= 4;
-
-                // Draw stone animation
-                //stone_anim.update(System.currentTimeMillis());
+                Spawn_Bubbles(dt);
                 break;
             }
         }
@@ -241,24 +219,38 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         }
     }
-    public void RenderScore(Canvas canvas)
+    public void RenderScore(Canvas canvas) // Done by Guan Hui
     {
         RenderTextOnScreen(canvas,"Score: " + Integer.toString(Score),130, 105, 30);
     }
-    public void RenderBubbles(Canvas canvas)
+
+    private void Spawn_Bubbles(float dt) // Done by Bryan
+    {
+        timer = timer + dt;
+        if(timer > 2)
+        {
+            Bubble NewBubble = new Bubble();
+            ListOfBubbles.add(NewBubble);
+            NewBubble.Init();
+            timer = 0;
+        }
+    }
+
+    public void RenderBubbles(Canvas canvas) // Done by Bryan
     {
         canvas.drawBitmap(Button_Background,0,0,null);
-        if (Button_active == true)
+        /*if (Button_active == true)
         {
             canvas.drawBitmap(Button_bitmap,ScreenWidth/2,ScreenHeight/2,null);
             canvas.drawBitmap(Button_bitmap,(ScreenWidth/2) - (ScreenWidth/5),ScreenHeight/2,null);
-        }
+        }*/
         for (int i = 0; i < ListOfBubbles.size(); i++)
         {
             if (ListOfBubbles.get(i).Active)
                 canvas.drawBitmap(Button_bitmap,ListOfBubbles.get(i).Position_x,ListOfBubbles.get(i).Position_y,null);
         }
     }
+
     public void RenderGameplay(Canvas canvas)
     {
         // 3) Re-draw 2nd image after the 1st image ends
@@ -267,32 +259,19 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             return;
         }
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-        /*canvas.drawBitmap(scaledbg, bgX, bgY, null);
-        canvas.drawBitmap(scaledbg, bgX + ScreenWidth, bgY, null);
-
-        // 8) Draw the spaceships
-        canvas.drawBitmap(ship[shipIndex], mX, mY, null);
-
-        // Week 7 Render FPS
-
-
-        // Draw sprite
-        stone_anim.draw(canvas);
-
-        //Week 7
-        //Edit after adding collision onTouch event & comment code above  -- stone_anim.setY(600);
-        stone_anim.setX(aX);
-        stone_anim.setY(aY);*/
 
         RenderBubbles(canvas);
         RenderScore(canvas);
         //FPS
         RenderTextOnScreen(canvas,"FPS: " + FPS, 130, 75, 30);
         //Touch position
-        RenderTextOnScreen(canvas,"X: " + Short.toString(touch_x) + "Y:" + Short.toString(touch_y),130, 145, 30);
+        RenderTextOnScreen(canvas,"X: " + Short.toString(touch_x) + "Y:" + Short.toString(touch_y),130, 135, 30);
+        //Timer
+        RenderTextOnScreen(canvas, "Timer: " + (2-timer), 130, 165, 30);
     }
+
     // Week 7 Print text on screen
-    public void RenderTextOnScreen (Canvas canvas, String text, int posX, int posY, int textsize)
+    public void RenderTextOnScreen (Canvas canvas, String text, int posX, int posY, int textsize) // Done by Bryan
     {
         if (canvas != null && text.length() != 0)
         {
@@ -306,7 +285,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             canvas.drawText(text, posX, posY, paint);
         }
     }
-    // Week 7 AABB
+
     public boolean CheckCollision (int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2)
     {
         //top left
@@ -323,6 +302,24 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
         return false;
     }
+
+    public boolean CheckSphereCollision(int ball_x, int ball_y, int scale, int x2, int y2, int scale2)
+    {
+        return false;
+    }
+
+    public boolean CheckSphereOverlap(int ball_x1, int ball_y1, int scale1, int ball_x2, int ball_y2, int scale2)
+    {
+        float Difference_X = ball_x2 - ball_x1;
+        float Difference_Y = ball_y2 - ball_y1;
+        float distanceSquared = Difference_X * Difference_X + Difference_Y * Difference_Y;
+        float combinedRadius = scale1 + scale2;
+
+        if(distanceSquared <= combinedRadius * combinedRadius)
+            return true;
+        else
+            return false;
+    }
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
@@ -331,55 +328,32 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         short X = touch_x = (short) event.getX();
         short Y = touch_y = (short) event.getY();
 
-
-
         switch(action)
         {
             case MotionEvent.ACTION_DOWN:
-                if (CheckCollision(ScreenWidth/2,ScreenHeight/2, ScreenWidth/5,ScreenWidth/5, X, Y, 0, 0) && Button_active)
-                {
-                    Button_active = false;
-                    Score += 2;
-
-                    // Vibrate for 500 milliseconds
-                    //v.vibrate(500);
-
-                }
-                if (CheckCollision((ScreenWidth/2) - (ScreenWidth/5),ScreenHeight/2, ScreenWidth/5,ScreenWidth/5, X, Y, 0, 0)&& Button_active)
-                {
-                    Button_active = false;
-                    Score += 2;
-                    //v.vibrate(500);
-                }
-
-                for (int i = 0; i < ListOfBubbles.size(); i++)
+                for (int i = 0; i < ListOfBubbles.size(); i++) // Done by Bryan
                 {
                     if (ListOfBubbles.get(i).Active)
                     {
-                        if (CheckCollision(ListOfBubbles.get(i).Position_x,ListOfBubbles.get(i).Position_y,ListOfBubbles.get(i).Scale,ListOfBubbles.get(i).Scale,X,Y,0,0 ))
+                        for(int j = i+1; j < ListOfBubbles.size(); j++)
                         {
-                            Score += 1;
-                            ListOfBubbles.get(i).Active = false;
+                            if (CheckCollision(ListOfBubbles.get(i).Position_x, ListOfBubbles.get(i).Position_y, ListOfBubbles.get(i).Scale, ListOfBubbles.get(i).Scale, X, Y, 0, 0))
+                            {
+                                Score += 1;
+                                /*if (CheckSphereOverlap(ListOfBubbles.get(i).Position_x, ListOfBubbles.get(i).Position_y, ListOfBubbles.get(i).Scale, ListOfBubbles.get(j).Position_x, ListOfBubbles.get(j).Position_y, ListOfBubbles.get(j).Scale))
+                                {
+                                    Score += 1;
+                                    ListOfBubbles.get(j).Active = false;
+                                }*/
+                                ListOfBubbles.get(i).Active = false;
+                            }
                         }
                     }
                 }
 
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (moveShip == true)
-                {
-                    // New location where the image to land on
-                    mX = (short) (X - ship[shipIndex].getWidth() / 2);
-                    mY = (short) (Y - ship[shipIndex].getHeight() / 2);
-                }
-                //Check if ship and stone collide
-                /*if (CheckCollision(mX, mY, ship[shipIndex].getWidth(), ship[shipIndex].getHeight(), aX, aY, stone_anim.getSpriteWidth(), stone_anim.getSpriteHeight()))
-                {
-                    Random random = new Random();
 
-                    aX = random.nextInt(ScreenWidth-50);
-                    aY = random.nextInt(ScreenHeight-50);
-                }*/
                 break;
 
             case MotionEvent.ACTION_UP:
@@ -389,17 +363,16 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     }
     private class Bubble // Done by guan hui
     {
-        public short Position_x ,Position_y, Scale;
+        public int Position_x ,Position_y, Scale;
         public boolean Active;
         public int Anim,Max_Anim, Time_between_anim;
 
-
         public void Init()
         {
-            Position_x = (short)(ScreenWidth/2);
-            Position_y = (short)(ScreenHeight/2);
+            Position_x = getRandomInt(Scale, (ScreenWidth/5)*4); // Done by Bryan
+            Position_y = getRandomInt(200+Scale, (ScreenHeight/5)*4); // Done by Bryan
             Active = true;
-            Scale = (short)(ScreenWidth/5);
+            Scale = (ScreenWidth/5);
             Anim = 0;
             Max_Anim = 0;
             Time_between_anim = 0;
