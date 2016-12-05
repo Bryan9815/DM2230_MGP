@@ -123,7 +123,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         v = (Vibrator) this.getContext().getSystemService(Context.VIBRATOR_SERVICE); // Done by Guan Hui
     }
 
-    private void Button_Init()
+    private void Button_Init() // Done by Bryan
     {
         Button_active = true;
         Button_bitmap = create_BitMap(R.drawable.blue_button,ScreenWidth/5,ScreenWidth/5);
@@ -140,7 +140,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
     }
 
-    private void Sound_Init()
+    private void Sound_Init() // Done by Guan Hui
     {
         BGM = MediaPlayer.create(getContext(),R.raw.kasger_reflections);
         BGM.setLooping(true);
@@ -212,7 +212,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     bgX = 0;
                 }
                 Spawn_Bubbles(dt);
-                if(ListOfBubbles.size() >= 10)
+                if(ListOfBubbles.size() >= 10) // Done by Bryan
                 {
                     GameState = 1;
                 }
@@ -232,6 +232,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         switch (GameState)
         {
             case 0:
+                RenderGameplay(canvas);
+                break;
+            case 1:
                 RenderGameplay(canvas);
                 break;
 
@@ -278,14 +281,35 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-        RenderBubbles(canvas);
-        RenderScore(canvas);
-        //FPS
-        RenderTextOnScreen(canvas,"FPS: " + FPS, 130, 75, 30);
-        //Touch position
-        RenderTextOnScreen(canvas,"X: " + Short.toString(touch_x) + "Y:" + Short.toString(touch_y),130, 135, 30);
-        //Timer
-        RenderTextOnScreen(canvas, "Timer: " + (2-timer), 130, 165, 30);
+        switch (GameState)
+        {
+            case 0:
+            {
+                RenderBubbles(canvas);
+                RenderScore(canvas);
+                //FPS
+                RenderTextOnScreen(canvas, "FPS: " + FPS, 130, 75, 30);
+                //Touch position
+                RenderTextOnScreen(canvas, "X: " + Short.toString(touch_x) + "Y:" + Short.toString(touch_y), 130, 135, 30);
+                //Timer
+                RenderTextOnScreen(canvas, "Timer: " + (2 - timer), 130, 165, 30);
+                //Game State
+                RenderTextOnScreen(canvas, "Game State: " + GameState, 540, 75, 30);
+                //Number of Bubbles
+                RenderTextOnScreen(canvas, "Number of Bubbles: " + ListOfBubbles.size(), 540, 105, 30);
+                break;
+            }
+            case 1: // Done by Bryan
+            {
+                canvas.drawBitmap(Button_Background,0,0,null);
+                // Game State
+                RenderTextOnScreen(canvas, "Game State: " + GameState, 400, 75, 30);
+                // Game Over
+                RenderTextOnScreen(canvas, "Game Over", ScreenWidth/4, ScreenHeight/2, 100);
+                // Score
+                RenderTextOnScreen(canvas,"Score: " + Integer.toString(Score),ScreenWidth/4, ScreenHeight/4*3, 80);
+            }
+        }
     }
 
     // Week 7 Print text on screen
@@ -304,7 +328,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
     }
 
-    public boolean CheckCollision (int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2)
+    public boolean CheckCollision (int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) // Done by Bryan
     {
         //top left
         if (x2 >= x1 && x2 <= x1 + w1)
@@ -321,7 +345,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         return false;
     }
 
-    public boolean CheckSphereCollision(int ball_x, int ball_y, int scale, int x2, int y2, int scale2)
+    public boolean CheckSphereCollision(int ball_x, int ball_y, int scale, int x2, int y2, int scale2) // Done by Bryan
     {
         return false;
     }
@@ -363,7 +387,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                                     Score += 1;
                                     ListOfBubbles.get(j).Active = false;
                                 }*/
-                                ListOfBubbles.get(i).Active = false;
+                                ListOfBubbles.remove(i);
                             }
                         }
                     }
