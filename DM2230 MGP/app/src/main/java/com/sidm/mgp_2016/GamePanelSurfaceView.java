@@ -69,6 +69,21 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private short touch_x,touch_y;
 
     Vibrator v;
+    Random RANDOM = new Random();
+    //int i1 = r.nextInt(max - min + 1) + min;
+
+    public int getRandomInt(int min, int max)
+    {
+        return RANDOM.nextInt(max - min + 1) + min;
+    }
+    public float getRandomFloat(float min, float max)
+    {
+        return RANDOM.nextFloat() * (max - min) + min;
+    }
+    public boolean getRandomBool()
+    {
+        return RANDOM.nextBoolean();
+    }
 
     private Bitmap create_BitMap(int img, int scale_x, int scale_y)
     {
@@ -338,9 +353,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     }
     private class Bubble
     {
-        short Position_x ,Position_y, Scale;
-        boolean Active;
-        //Bubble[] Linked_Bubbles;
+        public short Position_x ,Position_y, Scale;
+        public boolean Active;
+        public int Anim,Max_Anim, Time_between_anim;
+
 
         public void Init()
         {
@@ -348,6 +364,26 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             Position_y = (short)(ScreenHeight/2);
             Active = true;
             Scale = (short)(ScreenWidth/5);
+            Anim = 0;
+            Max_Anim = 0;
+            Time_between_anim = 0;
+        }
+
+        public void Update(float dt)
+        {
+            if (Time_between_anim < 200)
+                Time_between_anim += dt;
+            if (Time_between_anim > 200)
+            {
+                if (Anim <= Max_Anim)
+                {
+                    Anim++;
+                }
+                else
+                {
+                    Anim = 0;
+                }
+            }
         }
     }
 }
