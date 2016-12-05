@@ -76,6 +76,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     //Sound
     //MediaPlayer SoundPlayer;
+    MediaPlayer BGM;
 
     Vibrator v;
     Random RANDOM = new Random();
@@ -151,6 +152,12 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             ListOfBubbles.get(i).Init();
         }
     }
+    private void Sound_Init()
+    {
+        BGM = MediaPlayer.create(getContext(),R.raw.kasger_reflections);
+        BGM.setLooping(true);
+        BGM.start();
+    }
     private void Spawn_Bubbles()
     {
 
@@ -162,6 +169,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         super(context);
         Standard_Init(context);
         Button_Init();
+        Sound_Init();
     }
 
     //must implement inherited abstract methods
@@ -392,13 +400,14 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         public short Position_x ,Position_y, Scale;
         public boolean Active;
         public int Anim,Max_Anim, Time_between_anim;
-
+        public boolean Pop;
 
         public void Init()
         {
             Position_x = (short)(ScreenWidth/2);
             Position_y = (short)(ScreenHeight/2);
             Active = true;
+            Pop = false;
             Scale = (short)(ScreenWidth/5);
             Anim = 0;
             Max_Anim = 0;
@@ -407,9 +416,12 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         public void Update(float dt)
         {
-            if (Time_between_anim < 200)
+            if (!Pop)
+                return;
+
+            if (Time_between_anim <= 200)
                 Time_between_anim += dt;
-            if (Time_between_anim > 200)
+            else if (Time_between_anim > 200)
             {
                 if (Anim <= Max_Anim)
                 {
@@ -417,6 +429,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 }
                 else
                 {
+                    Active = false;
                     Anim = 0;
                 }
             }
