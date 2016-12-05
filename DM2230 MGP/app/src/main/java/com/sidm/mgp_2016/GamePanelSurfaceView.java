@@ -100,7 +100,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         ship[3] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_4)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
 
         // Font
-        Font.createFromAsset(getContext().getAssets(), "fonts/ITCBLKAD.TTF");
+        Font = Typeface.createFromAsset(getContext().getAssets(), "fonts/cambriaz.ttf");
 
         // Week 7 Load images for Flying Stone animation
         //stone_anim = new SpriteAnimation(Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.flystar)), (int) (ScreenWidth)/4, (int) (ScreenHeight)/10, true), 320, 64, 5, 5);
