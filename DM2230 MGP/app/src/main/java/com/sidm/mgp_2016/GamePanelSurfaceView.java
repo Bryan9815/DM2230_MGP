@@ -1,6 +1,7 @@
 package com.sidm.mgp_2016;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -68,6 +69,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     //Sound
     //MediaPlayer SoundPlayer;
+    MediaPlayer BGM;
 
     Vibrator v;
     Random RANDOM = new Random();
@@ -138,6 +140,13 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
     }
 
+    private void Sound_Init()
+    {
+        BGM = MediaPlayer.create(getContext(),R.raw.kasger_reflections);
+        BGM.setLooping(true);
+        BGM.start();
+    }
+
     //constructor for this GamePanelSurfaceView class
     public GamePanelSurfaceView(Context context)
     {
@@ -145,6 +154,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         super(context);
         Standard_Init(context);
         Button_Init();
+        Sound_Init();
     }
 
     //must implement inherited abstract methods
@@ -202,6 +212,14 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     bgX = 0;
                 }
                 Spawn_Bubbles(dt);
+                if(ListOfBubbles.size() >= 10)
+                {
+                    GameState = 1;
+                }
+                break;
+            }
+            case 1:
+            {
                 break;
             }
         }
@@ -367,12 +385,15 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         public boolean Active;
         public int Anim,Max_Anim, Time_between_anim;
 
+        public boolean Pop;
+
         public void Init()
         {
             Position_x = getRandomInt(Scale, (ScreenWidth/5)*4); // Done by Bryan
             Position_y = getRandomInt(200+Scale, (ScreenHeight/5)*4); // Done by Bryan
             Active = true;
-            Scale = (ScreenWidth/5);
+            Pop = false;
+            Scale = (short)(ScreenWidth/5);
             Anim = 0;
             Max_Anim = 0;
             Time_between_anim = 0;
@@ -380,9 +401,12 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         public void Update(float dt)
         {
-            if (Time_between_anim < 200)
+            if (!Pop)
+                return;
+
+            if (Time_between_anim <= 200)
                 Time_between_anim += dt;
-            if (Time_between_anim > 200)
+            else if (Time_between_anim > 200)
             {
                 if (Anim <= Max_Anim)
                 {
@@ -390,6 +414,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 }
                 else
                 {
+                    Active = false;
                     Anim = 0;
                 }
             }
