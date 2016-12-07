@@ -380,14 +380,12 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         switch(action)
         {
             case MotionEvent.ACTION_DOWN:
+            {
                 for (int i = 0; i < ListOfBubbles.size(); i++) // Done by Bryan
                 {
-                    if (ListOfBubbles.get(i).Active)
-                    {
-                        for(int j = i+1; j < ListOfBubbles.size(); j++)
-                        {
-                            if (CheckCollision(ListOfBubbles.get(i).Position_x, ListOfBubbles.get(i).Position_y, ListOfBubbles.get(i).Scale, ListOfBubbles.get(i).Scale, X, Y, 0, 0))
-                            {
+                    if (ListOfBubbles.get(i).Active) {
+                        for (int j = i + 1; j < ListOfBubbles.size(); j++) {
+                            if (CheckCollision(ListOfBubbles.get(i).Position_x, ListOfBubbles.get(i).Position_y, ListOfBubbles.get(i).Scale, ListOfBubbles.get(i).Scale, X, Y, 0, 0)) {
                                 ListOfBubbles.get(i).Pop = true;
                                 /*if (CheckSphereOverlap(ListOfBubbles.get(i).Position_x, ListOfBubbles.get(i).Position_y, ListOfBubbles.get(i).Scale, ListOfBubbles.get(j).Position_x, ListOfBubbles.get(j).Position_y, ListOfBubbles.get(j).Scale))
                                 {
@@ -398,15 +396,16 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
                         }
                     }
                 }
-
                 break;
+            }
             case MotionEvent.ACTION_MOVE:
-
+            {
                 break;
-
+            }
             case MotionEvent.ACTION_UP:
-
+            {
                 break;
+            }
         }return true;
     }
     private class Bubble // Done by guan hui
