@@ -55,11 +55,13 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
 
     private int aX = 300, aY = 300;
 
-    //Button variables
-    private boolean Button_active;
-    private Bitmap Button_bitmap, Button_Background;
+    //Bubble variables
+    private boolean Bubble_active;
+    private Bitmap Bubble_bitmap, Bubble_Background;
     private Vector<Bubble> ListOfBubbles;
     private float timer = 0;
+    // Red Bubble Index
+    private Bitmap[] redBubble = new Bitmap[5];
 
     //Score
     private int Score;
@@ -110,11 +112,16 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         v = (Vibrator) this.getContext().getSystemService(Context.VIBRATOR_SERVICE); // Done by Guan Hui
     }
 
-    private void Button_Init() // Done by Bryan
+    private void Bubble_Init() // Done by Bryan
     {
-        Button_active = true;
-        Button_bitmap = create_BitMap(R.drawable.blue_button,ScreenWidth/5,ScreenWidth/5);
-        Button_Background = create_BitMap(R.drawable.button_background,ScreenWidth,ScreenHeight);
+        Bubble_active = true;
+        Bubble_bitmap = create_BitMap(R.drawable.blue_button,ScreenWidth/5,ScreenWidth/5);
+        Bubble_Background = create_BitMap(R.drawable.button_background,ScreenWidth,ScreenHeight);
+        redBubble[0] = create_BitMap(R.drawable.red_bubble1, ScreenWidth/5, ScreenWidth/5);
+        redBubble[1] = create_BitMap(R.drawable.red_bubble2, ScreenWidth/5, ScreenWidth/5);
+        redBubble[2] = create_BitMap(R.drawable.red_bubble3, ScreenWidth/5, ScreenWidth/5);
+        redBubble[3] = create_BitMap(R.drawable.red_bubble4, ScreenWidth/5, ScreenWidth/5);
+        redBubble[4] = create_BitMap(R.drawable.red_bubble5, ScreenWidth/5, ScreenWidth/5);
 
         //Create Bubbles
         ListOfBubbles = new Vector<Bubble>();
@@ -140,7 +147,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         // Context is the current state of the application/object
         super(context);
         Standard_Init(context);
-        Button_Init();
+        Bubble_Init();
         Sound_Init();
     }
 
@@ -203,6 +210,18 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
                 {
                     GameState = 1;
                 }
+                for (int i = 0; i < ListOfBubbles.size(); i++) // Done by Bryan
+                {
+                    if (ListOfBubbles.get(i).Pop)
+                    {
+                        ListOfBubbles.get(i).Index++;
+                        if (ListOfBubbles.get(i).Index == 4)
+                        {
+                            Score += 1;
+                            ListOfBubbles.remove(i);
+                        }
+                    }
+                }
                 break;
             }
             case 1:
@@ -247,16 +266,16 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
 
     public void RenderBubbles(Canvas canvas) // Done by Bryan
     {
-        canvas.drawBitmap(Button_Background,0,0,null);
-        /*if (Button_active == true)
+        canvas.drawBitmap(Bubble_Background,0,0,null);
+        /*if (Bubble_active == true)
         {
-            canvas.drawBitmap(Button_bitmap,ScreenWidth/2,ScreenHeight/2,null);
-            canvas.drawBitmap(Button_bitmap,(ScreenWidth/2) - (ScreenWidth/5),ScreenHeight/2,null);
+            canvas.drawBitmap(Bubble_bitmap,ScreenWidth/2,ScreenHeight/2,null);
+            canvas.drawBitmap(Bubble_bitmap,(ScreenWidth/2) - (ScreenWidth/5),ScreenHeight/2,null);
         }*/
         for (int i = 0; i < ListOfBubbles.size(); i++)
         {
             if (ListOfBubbles.get(i).Active)
-                canvas.drawBitmap(Button_bitmap,ListOfBubbles.get(i).Position_x,ListOfBubbles.get(i).Position_y,null);
+                canvas.drawBitmap(redBubble[ListOfBubbles.get(i).Index],ListOfBubbles.get(i).Position_x,ListOfBubbles.get(i).Position_y,null);
         }
     }
 
@@ -289,7 +308,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
             }
             case 1: // Done by Bryan
             {
-                canvas.drawBitmap(Button_Background,0,0,null);
+                canvas.drawBitmap(Bubble_Background,0,0,null);
                 // Game State
                 RenderTextOnScreen(canvas, "Game State: " + GameState, 400, 75, 30);
                 // Game Over
@@ -369,13 +388,12 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
                         {
                             if (CheckCollision(ListOfBubbles.get(i).Position_x, ListOfBubbles.get(i).Position_y, ListOfBubbles.get(i).Scale, ListOfBubbles.get(i).Scale, X, Y, 0, 0))
                             {
-                                Score += 1;
+                                ListOfBubbles.get(i).Pop = true;
                                 /*if (CheckSphereOverlap(ListOfBubbles.get(i).Position_x, ListOfBubbles.get(i).Position_y, ListOfBubbles.get(i).Scale, ListOfBubbles.get(j).Position_x, ListOfBubbles.get(j).Position_y, ListOfBubbles.get(j).Scale))
                                 {
                                     Score += 1;
                                     ListOfBubbles.get(j).Active = false;
                                 }*/
-                                ListOfBubbles.remove(i);
                             }
                         }
                     }
@@ -396,6 +414,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         public int Position_x ,Position_y, Scale;
         public boolean Active;
         public int Anim,Max_Anim, Time_between_anim;
+        public short Index; // Done by Bryan
 
         public boolean Pop;
 
@@ -406,6 +425,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
             Active = true;
             Pop = false;
             Scale = (short)(ScreenWidth/5);
+            Index = 0; // Done by Bryan
             Anim = 0;
             Max_Anim = 0;
             Time_between_anim = 0;
