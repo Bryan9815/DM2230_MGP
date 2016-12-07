@@ -23,7 +23,7 @@ import android.os.Vibrator;
 import java.util.Random;
 import java.util.Vector;
 
-public class GamePanelSurfaceView extends SurfaceView,Randomiser,ParticleSystem implements SurfaceHolder.Callback {
+public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolder.Callback {
     // Implement this interface to receive information about changes to the surface.
 
     protected static final String TAG = null;
