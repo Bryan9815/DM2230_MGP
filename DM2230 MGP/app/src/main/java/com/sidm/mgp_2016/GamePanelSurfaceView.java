@@ -23,7 +23,7 @@ import android.os.Vibrator;
 import java.util.Random;
 import java.util.Vector;
 
-public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
+public class GamePanelSurfaceView extends SurfaceView,Randomiser,ParticleSystem implements SurfaceHolder.Callback {
     // Implement this interface to receive information about changes to the surface.
 
     protected static final String TAG = null;
@@ -72,23 +72,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     MediaPlayer BGM;
 
     Vibrator v;
-    Random RANDOM = new Random();
+
     //int i1 = r.nextInt(max - min + 1) + min;
 
     // Done by guan hui-------------------------------------------
-    public int getRandomInt(int min, int max)
-    {
-        return RANDOM.nextInt(max - min + 1) + min;
-    }
-    public float getRandomFloat(float min, float max)
-    {
-        return RANDOM.nextFloat() * (max - min) + min;
-    }
-    public boolean getRandomBool()
-    {
-        return RANDOM.nextBoolean();
-    }
-
     private Bitmap create_BitMap(int img, int scale_x, int scale_y)
     {
         return Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), img),scale_x,scale_y,true);
@@ -247,8 +234,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     private void Spawn_Bubbles(float dt) // Done by Bryan
     {
-        timer = timer + dt;
-        if(timer > 2)
+        if (timer < 2)//Done by Guan hui
+            timer = timer + dt;
+        else//(timer >= 2)
         {
             Bubble NewBubble = new Bubble();
             ListOfBubbles.add(NewBubble);
