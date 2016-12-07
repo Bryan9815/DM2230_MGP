@@ -1,10 +1,16 @@
 package com.sidm.mgp_2016;
 
+import android.content.Context;
+
 /**
  * Created by guanhui1998 on 5/12/2016.
  */
 
-public class ParticleSystem {
+public class ParticleSystem extends Randomiser {
+    public ParticleSystem(Context context) {
+        super(context);
+    }
+
     public class Particle
     {
         int Position_X, Position_Y;
