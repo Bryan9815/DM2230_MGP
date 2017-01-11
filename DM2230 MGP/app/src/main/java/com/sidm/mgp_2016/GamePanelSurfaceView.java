@@ -58,7 +58,6 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
     //Bubble variables
     private boolean Bubble_active;
     private Bitmap Bubble_bitmap, Bubble_Background;
-    private Vector<Bubble> ListOfBubbles;
     private float timer = 0;
     // Red Bubble Index
     private Bitmap[] redBubble = new Bitmap[5];
@@ -82,7 +81,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
     {
         return Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), img),scale_x,scale_y,true);
     }
-    //------------------------------------------------------------
+
     private void Standard_Init(Context context)
     {
         // Adding the callback (this) to the surface holder to intercept events
@@ -111,28 +110,9 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
 
         v = (Vibrator) this.getContext().getSystemService(Context.VIBRATOR_SERVICE); // Done by Guan Hui
     }
+    //------------------------------------------------------------
 
-    private void Bubble_Init() // Done by Bryan
-    {
-        Bubble_active = true;
-        Bubble_bitmap = create_BitMap(R.drawable.blue_button,ScreenWidth/5,ScreenWidth/5);
-        Bubble_Background = create_BitMap(R.drawable.button_background,ScreenWidth,ScreenHeight);
-        redBubble[0] = create_BitMap(R.drawable.red_bubble1, ScreenWidth/5, ScreenWidth/5);
-        redBubble[1] = create_BitMap(R.drawable.red_bubble2, ScreenWidth/5, ScreenWidth/5);
-        redBubble[2] = create_BitMap(R.drawable.red_bubble3, ScreenWidth/5, ScreenWidth/5);
-        redBubble[3] = create_BitMap(R.drawable.red_bubble4, ScreenWidth/5, ScreenWidth/5);
-        redBubble[4] = create_BitMap(R.drawable.red_bubble5, ScreenWidth/5, ScreenWidth/5);
 
-        //Create Bubbles
-        ListOfBubbles = new Vector<Bubble>();
-        Bubble NewBubble = new Bubble();
-        ListOfBubbles.add(NewBubble);
-
-        for (int i = 0; i < ListOfBubbles.size(); i++)
-        {
-            ListOfBubbles.get(i).Init();
-        }
-    }
 
     private void Sound_Init() // Done by Guan Hui
     {
@@ -147,7 +127,6 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         // Context is the current state of the application/object
         super(context);
         Standard_Init(context);
-        Bubble_Init();
         Sound_Init();
     }
 
@@ -205,23 +184,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
                 {
                     bgX = 0;
                 }
-                Spawn_Bubbles(dt);
-                if(ListOfBubbles.size() >= 10) // Done by Bryan
-                {
-                    GameState = 1;
-                }
-                for (int i = 0; i < ListOfBubbles.size(); i++) // Done by Bryan
-                {
-                    if (ListOfBubbles.get(i).Pop)
-                    {
-                        ListOfBubbles.get(i).Index++;
-                        if (ListOfBubbles.get(i).Index == 4)
-                        {
-                            Score += 1;
-                            ListOfBubbles.remove(i);
-                        }
-                    }
-                }
+
                 break;
             }
             case 1:
@@ -251,33 +214,22 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         RenderTextOnScreen(canvas,"Score: " + Integer.toString(Score),130, 105, 30);
     }
 
-    private void Spawn_Bubbles(float dt) // Done by Bryan
-    {
-        if (timer < 2)//Done by Guan hui
-            timer = timer + dt;
-        else//(timer >= 2)
-        {
-            Bubble NewBubble = new Bubble();
-            ListOfBubbles.add(NewBubble);
-            NewBubble.Init();
-            timer = 0;
-        }
-    }
 
-    public void RenderBubbles(Canvas canvas) // Done by Bryan
+
+    /*public void RenderBubbles(Canvas canvas) // Done by Bryan
     {
         canvas.drawBitmap(Bubble_Background,0,0,null);
-        /*if (Bubble_active == true)
+        *//*if (Bubble_active == true)
         {
             canvas.drawBitmap(Bubble_bitmap,ScreenWidth/2,ScreenHeight/2,null);
             canvas.drawBitmap(Bubble_bitmap,(ScreenWidth/2) - (ScreenWidth/5),ScreenHeight/2,null);
-        }*/
+        }*//*
         for (int i = 0; i < ListOfBubbles.size(); i++)
         {
             if (ListOfBubbles.get(i).Active)
-                canvas.drawBitmap(redBubble[ListOfBubbles.get(i).Index],ListOfBubbles.get(i).Position_x,ListOfBubbles.get(i).Position_y,null);
+                canvas.drawBitmap(redBubble[ListOfBubbles.get(i).Anim],ListOfBubbles.get(i).Position_x,ListOfBubbles.get(i).Position_y,null);
         }
-    }
+    }*/
 
     public void RenderGameplay(Canvas canvas)
     {
@@ -292,7 +244,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         {
             case 0:
             {
-                RenderBubbles(canvas);
+
                 RenderScore(canvas);
                 //FPS
                 RenderTextOnScreen(canvas, "FPS: " + FPS, 130, 75, 30);
@@ -302,8 +254,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
                 RenderTextOnScreen(canvas, "Timer: " + (2 - timer), 130, 165, 30);
                 //Game State
                 RenderTextOnScreen(canvas, "Game State: " + GameState, 540, 75, 30);
-                //Number of Bubbles
-                RenderTextOnScreen(canvas, "Number of Bubbles: " + ListOfBubbles.size(), 540, 105, 30);
+
                 break;
             }
             case 1: // Done by Bryan
@@ -381,21 +332,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         {
             case MotionEvent.ACTION_DOWN:
             {
-                for (int i = 0; i < ListOfBubbles.size(); i++) // Done by Bryan
-                {
-                    if (ListOfBubbles.get(i).Active) {
-                        for (int j = i + 1; j < ListOfBubbles.size(); j++) {
-                            if (CheckCollision(ListOfBubbles.get(i).Position_x, ListOfBubbles.get(i).Position_y, ListOfBubbles.get(i).Scale, ListOfBubbles.get(i).Scale, X, Y, 0, 0)) {
-                                ListOfBubbles.get(i).Pop = true;
-                                /*if (CheckSphereOverlap(ListOfBubbles.get(i).Position_x, ListOfBubbles.get(i).Position_y, ListOfBubbles.get(i).Scale, ListOfBubbles.get(j).Position_x, ListOfBubbles.get(j).Position_y, ListOfBubbles.get(j).Scale))
-                                {
-                                    Score += 1;
-                                    ListOfBubbles.get(j).Active = false;
-                                }*/
-                            }
-                        }
-                    }
-                }
+
                 break;
             }
             case MotionEvent.ACTION_MOVE:
@@ -408,47 +345,5 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
             }
         }return true;
     }
-    private class Bubble // Done by guan hui
-    {
-        public int Position_x ,Position_y, Scale;
-        public boolean Active;
-        public int Anim,Max_Anim, Time_between_anim;
-        public short Index; // Done by Bryan
 
-        public boolean Pop;
-
-        public void Init()
-        {
-            Position_x = getRandomInt(Scale, (ScreenWidth/5)*4); // Done by Bryan
-            Position_y = getRandomInt(200+Scale, (ScreenHeight/5)*4); // Done by Bryan
-            Active = true;
-            Pop = false;
-            Scale = (short)(ScreenWidth/5);
-            Index = 0; // Done by Bryan
-            Anim = 0;
-            Max_Anim = 0;
-            Time_between_anim = 0;
-        }
-
-        public void Update(float dt)
-        {
-            if (!Pop)
-                return;
-
-            if (Time_between_anim <= 200)
-                Time_between_anim += dt;
-            else if (Time_between_anim > 200)
-            {
-                if (Anim <= Max_Anim)
-                {
-                    Anim++;
-                }
-                else
-                {
-                    Active = false;
-                    Anim = 0;
-                }
-            }
-        }
-    }
 }
