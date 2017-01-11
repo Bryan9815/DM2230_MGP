@@ -8,15 +8,9 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background = "@drawable/backgnd"
+    android:background = "@drawable/menu_background"
     android:orientation = "horizontal"
     tools:context="com.sidm.mgp_2016.MainMenu">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:id="@+id/textView" />
 
     <Button
         android:id="@+id/Btn_Start"
@@ -28,7 +22,6 @@
     android:text="Start"
     android:textSize="18dp"
     android:textColor="#bdfcf2"
-    android:layout_below="@+id/textView"
     android:layout_alignParentEnd="true"
     android:layout_marginEnd="39dp" />
 
@@ -42,7 +35,6 @@
         android:text="Options"
         android:textSize="18dp"
         android:textColor="#bdfcf2"
-        android:layout_below="@+id/textView"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="39dp" />
 
