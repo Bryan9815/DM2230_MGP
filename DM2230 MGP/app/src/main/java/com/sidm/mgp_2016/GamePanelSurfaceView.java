@@ -108,7 +108,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
 
         Score = 0;
 
-        v = (Vibrator) this.getContext().getSystemService(Context.VIBRATOR_SERVICE); // Done by Guan Hui
+        v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE); // Done by Guan Hui
     }
     //------------------------------------------------------------
 
@@ -119,6 +119,18 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         BGM = MediaPlayer.create(getContext(),R.raw.kasger_reflections);
         BGM.setLooping(true);
         BGM.start();
+    }
+
+    public void startVibrate()
+    {
+        long pattern[] = {0,50,0};
+        v.vibrate(pattern,-1);
+        Log.v(TAG,"test if vibrate occurs");
+    }
+
+    public void stopVibrate()
+    {
+        v.cancel();
     }
 
     //constructor for this GamePanelSurfaceView class
@@ -149,6 +161,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         if (myThread.isAlive())
         {
             myThread.startRun(false);
+            stopVibrate();
         }
 
         // Stop the thread
@@ -332,7 +345,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         {
             case MotionEvent.ACTION_DOWN:
             {
-
+                startVibrate();
                 break;
             }
             case MotionEvent.ACTION_MOVE:
@@ -341,6 +354,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
             }
             case MotionEvent.ACTION_UP:
             {
+                startVibrate();
                 break;
             }
         }return true;
