@@ -257,12 +257,14 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         {
             case 0:
             {
+                canvas.drawBitmap(scaledbg, bgX, bgY, null);
+                canvas.drawBitmap(scaledbg, bgX + ScreenWidth, bgY, null);
 
                 RenderScore(canvas);
                 //FPS
                 RenderTextOnScreen(canvas, "FPS: " + FPS, 130, 75, 30);
                 //Touch position
-                RenderTextOnScreen(canvas, "X: " + Short.toString(touch_x) + "Y:" + Short.toString(touch_y), 130, 135, 30);
+                RenderTextOnScreen(canvas, "X: " + Short.toString(touch_x) + "   Y:" + Short.toString(touch_y), 130, 135, 30);
                 //Timer
                 RenderTextOnScreen(canvas, "Timer: " + (2 - timer), 130, 165, 30);
                 //Game State
