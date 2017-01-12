@@ -23,7 +23,7 @@ public class GamePage extends Activity
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //setContentView(R.layout.activity_game_page);
-        setContentView(new GamePanelSurfaceView(this));
+        setContentView(new GamePanelSurfaceView(this, this));
 
     }
 
