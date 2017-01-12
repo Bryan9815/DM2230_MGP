@@ -1,6 +1,9 @@
 package com.sidm.mgp_2016;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +13,8 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -18,6 +23,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.graphics.Paint;
 import android.os.Vibrator;
+import android.widget.EditText;
+import android.widget.Toast;
 
 
 import java.util.Random;
@@ -73,6 +80,16 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
     MediaPlayer BGM;
 
     Vibrator v;
+
+    // Week 13
+    CharSequence toast_Text;
+    int toast_Time;
+    Toast toast;
+
+    public boolean showAlert = false;
+    AlertDialog.Builder alert = null;
+    private Alert AlertObj;
+    Activity activityTracker;
 
     //int i1 = r.nextInt(max - min + 1) + min;
 
@@ -133,13 +150,61 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         v.cancel();
     }
 
+    public void ToastMessage(Context context)
+    {
+        // For Toast
+        toast_Text = "HIT!";
+        toast_Time = Toast.LENGTH_SHORT;
+        toast = Toast.makeText(context, toast_Text, toast_Time);
+    }
+
+    public void AlertInit(Activity activity)
+    {
+        // To track an activity
+        activityTracker = activity;
+
+        // Create Alert Dialog
+        AlertObj = new Alert(this);
+        alert = new AlertDialog.Builder(getContext());
+
+        // Allow plaers to input their name
+        final EditText input = new EditText(getContext());
+
+        // Define the input method where 'enter' key is disabled
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+
+        // Define max of 20 characters to be entered for 'Name' field
+        int maxLength = 20;
+        InputFilter[] FilterArray = new InputFilter[1];
+        FilterArray[0] = new InputFilter.LengthFilter(maxLength);
+        input.setFilters(FilterArray);
+
+        // Set up the alert dialog
+        alert.setCancelable(false);
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener()
+        {
+            // do something when the button is clicked
+            public void onClick(DialogInterface arg0, int arg1)
+            {
+                Intent intent = new Intent();
+                intent.setClass(getContext(), MainMenu.class);
+                activityTracker.startActivity(intent);
+            }
+        });
+    }
+
     //constructor for this GamePanelSurfaceView class
-    public GamePanelSurfaceView(Context context)
+    public GamePanelSurfaceView(Context context, Activity activity)
     {
         // Context is the current state of the application/object
         super(context);
+
         Standard_Init(context);
         Sound_Init();
+        ToastMessage(context);
+        AlertInit(activity);
     }
 
     //must implement inherited abstract methods
@@ -227,8 +292,6 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         RenderTextOnScreen(canvas,"Score: " + Integer.toString(Score),130, 105, 30);
     }
 
-
-
     /*public void RenderBubbles(Canvas canvas) // Done by Bryan
     {
         canvas.drawBitmap(Bubble_Background,0,0,null);
@@ -266,7 +329,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
                 //Touch position
                 RenderTextOnScreen(canvas, "X: " + Short.toString(touch_x) + "   Y:" + Short.toString(touch_y), 130, 135, 30);
                 //Timer
-                RenderTextOnScreen(canvas, "Timer: " + (2 - timer), 130, 165, 30);
+                //RenderTextOnScreen(canvas, "Timer: " + (2 - timer), 130, 165, 30);
                 //Game State
                 RenderTextOnScreen(canvas, "Game State: " + GameState, 540, 75, 30);
 
@@ -347,6 +410,12 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         {
             case MotionEvent.ACTION_DOWN:
             {
+                toast.show();
+                if(!showAlert)
+                {
+                    AlertObj.RunAlert();
+                    showAlert = true;
+                }
                 startVibrate();
                 break;
             }
