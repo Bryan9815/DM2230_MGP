@@ -128,8 +128,7 @@ public class Vector3 {
 
     public Vector3 Cross(Vector3 rhs)
     {
-        Vector3 temp = new Vector3(b * rhs.c - c * rhs.b, c * rhs.a - a * rhs.c, a * rhs.b - b * rhs.a);
-        return temp;
+        return new Vector3(b * rhs.c - c * rhs.b, c * rhs.a - a * rhs.c, a * rhs.b - b * rhs.a);
     }
 
     public Vector3 Normalized()
@@ -137,8 +136,7 @@ public class Vector3 {
         float d = Length();
         if (d <= 0.00001f && -d <= 0.00001f)
             return null;
-        Vector3 temp = new Vector3(a/d,b/d,c/d);
-        return temp;
+        return new Vector3(a/d,b/d,c/d);
     }
 
     public Vector3 Normalize()
