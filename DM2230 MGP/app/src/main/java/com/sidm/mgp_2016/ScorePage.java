@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-public class ScorePage extends Activity implements OnClickListener
+public class ScorePage extends Activity implements OnClickListener // Done by Bryan
 {
     private Button Btn_Return;
 

@@ -42,7 +42,7 @@ public class MainMenu extends Activity implements OnClickListener
         }
         else if (v == Btn_Options)
         {
-            i.setClass(this, ScorePage.class);
+            i.setClass(this, Options.class);
         }
         startActivity(i);
     }

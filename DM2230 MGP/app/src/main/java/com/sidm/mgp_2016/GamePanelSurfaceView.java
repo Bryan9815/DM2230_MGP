@@ -135,6 +135,8 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         setFocusable(true);
 
         v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE); // Done by Guan Hui
+
+        GameState = 0;
     }
     //------------------------------------------------------------
 
@@ -198,17 +200,18 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
             // do something when the button is clicked
             public void onClick(DialogInterface arg0, int arg1)
             {
-                /*Intent intent = new Intent();
-                intent.setClass(getContext(), MainMenu.class);
-                activityTracker.startActivity(intent);*/
                 PlayerName = input.getText().toString();
                 EditName.putString("Player Name", PlayerName);
                 EditName.commit();
+
+                Intent intent = new Intent();
+                intent.setClass(getContext(), ScorePage.class);
+                activityTracker.startActivity(intent);
             }
         });
     }
 
-    public void SharedPreferencesInit()
+    public void SharedPreferencesInit() // Done by Bryan
     {
         SharePrefScore = getContext().getSharedPreferences("High Score", Context.MODE_PRIVATE);
         EditScore = SharePrefScore.edit();
@@ -289,17 +292,16 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
                 {
                     bgX = 0;
                 }
-
-                break;
-            }
-            case 1:
-            {
                 if(Score > HighScore)
                 {
                     HighScore = Score;
                     EditScore.putInt("High Score", HighScore);
                     EditScore.commit();
                 }
+                break;
+            }
+            case 1:
+            {
                 break;
             }
         }
