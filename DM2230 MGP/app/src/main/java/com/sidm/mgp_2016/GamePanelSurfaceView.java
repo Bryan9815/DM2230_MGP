@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -91,6 +92,16 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
     private Alert AlertObj;
     Activity activityTracker;
 
+    // High Score
+    SharedPreferences SharePrefScore;
+    SharedPreferences.Editor EditScore;
+    int HighScore;
+
+    // Player Name
+    SharedPreferences SharePrefName;
+    SharedPreferences.Editor EditName;
+    String PlayerName;
+
     //int i1 = r.nextInt(max - min + 1) + min;
 
     // Done by guan hui-------------------------------------------
@@ -123,13 +134,9 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         // Make the GamePanel focusable so it can handle events
         setFocusable(true);
 
-        Score = 0;
-
         v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE); // Done by Guan Hui
     }
     //------------------------------------------------------------
-
-
 
     private void Sound_Init() // Done by Guan Hui
     {
@@ -138,7 +145,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         BGM.start();
     }
 
-    public void startVibrate()
+    public void startVibrate() // Done by Guan Hui
     {
         long pattern[] = {0,50,0};
         v.vibrate(pattern,-1);
@@ -148,9 +155,9 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
     public void stopVibrate()
     {
         v.cancel();
-    }
+    } // Done by Guan Hui
 
-    public void ToastMessage(Context context)
+    public void ToastMessage(Context context) // Done by Bryan
     {
         // For Toast
         toast_Text = "HIT!";
@@ -158,7 +165,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         toast = Toast.makeText(context, toast_Text, toast_Time);
     }
 
-    public void AlertInit(Activity activity)
+    public void AlertInit(Activity activity) // Done by Bryan
     {
         // To track an activity
         activityTracker = activity;
@@ -180,7 +187,10 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         input.setFilters(FilterArray);
 
         // Set up the alert dialog
+        alert.setTitle("Game Over");
+        alert.setMessage("Please enter your name");
         alert.setCancelable(false);
+
         alert.setView(input);
 
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener()
@@ -188,11 +198,27 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
             // do something when the button is clicked
             public void onClick(DialogInterface arg0, int arg1)
             {
-                Intent intent = new Intent();
+                /*Intent intent = new Intent();
                 intent.setClass(getContext(), MainMenu.class);
-                activityTracker.startActivity(intent);
+                activityTracker.startActivity(intent);*/
+                PlayerName = input.getText().toString();
+                EditName.putString("Player Name", PlayerName);
+                EditName.commit();
             }
         });
+    }
+
+    public void SharedPreferencesInit()
+    {
+        SharePrefScore = getContext().getSharedPreferences("High Score", Context.MODE_PRIVATE);
+        EditScore = SharePrefScore.edit();
+        Score = 0;
+        HighScore = SharePrefScore.getInt("High Score", 0);
+
+        SharePrefName = getContext().getSharedPreferences("Player Name", Context.MODE_PRIVATE);
+        EditName = SharePrefName.edit();
+        PlayerName = "Player";
+        PlayerName = SharePrefName.getString("Player Name", "DEFAULT");
     }
 
     //constructor for this GamePanelSurfaceView class
@@ -205,6 +231,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         Sound_Init();
         ToastMessage(context);
         AlertInit(activity);
+        SharedPreferencesInit();
     }
 
     //must implement inherited abstract methods
@@ -267,6 +294,12 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
             }
             case 1:
             {
+                if(Score > HighScore)
+                {
+                    HighScore = Score;
+                    EditScore.putInt("High Score", HighScore);
+                    EditScore.commit();
+                }
                 break;
             }
         }
@@ -291,21 +324,6 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
     {
         RenderTextOnScreen(canvas,"Score: " + Integer.toString(Score),130, 105, 30);
     }
-
-    /*public void RenderBubbles(Canvas canvas) // Done by Bryan
-    {
-        canvas.drawBitmap(Bubble_Background,0,0,null);
-        *//*if (Bubble_active == true)
-        {
-            canvas.drawBitmap(Bubble_bitmap,ScreenWidth/2,ScreenHeight/2,null);
-            canvas.drawBitmap(Bubble_bitmap,(ScreenWidth/2) - (ScreenWidth/5),ScreenHeight/2,null);
-        }*//*
-        for (int i = 0; i < ListOfBubbles.size(); i++)
-        {
-            if (ListOfBubbles.get(i).Active)
-                canvas.drawBitmap(redBubble[ListOfBubbles.get(i).Anim],ListOfBubbles.get(i).Position_x,ListOfBubbles.get(i).Position_y,null);
-        }
-    }*/
 
     public void RenderGameplay(Canvas canvas)
     {
@@ -381,23 +399,6 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         return false;
     }
 
-    public boolean CheckSphereCollision(int ball_x, int ball_y, int scale, int x2, int y2, int scale2) // Done by Bryan
-    {
-        return false;
-    }
-
-    public boolean CheckSphereOverlap(int ball_x1, int ball_y1, int scale1, int ball_x2, int ball_y2, int scale2)
-    {
-        float Difference_X = ball_x2 - ball_x1;
-        float Difference_Y = ball_y2 - ball_y1;
-        float distanceSquared = Difference_X * Difference_X + Difference_Y * Difference_Y;
-        float combinedRadius = scale1 + scale2;
-
-        if(distanceSquared <= combinedRadius * combinedRadius)
-            return true;
-        else
-            return false;
-    }
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
