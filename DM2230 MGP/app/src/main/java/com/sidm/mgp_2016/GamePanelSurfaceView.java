@@ -72,6 +72,8 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
 
     //Score
     private int Score;
+    private int Energy;
+    private int Delay_Timer;
 
     //Touch position
     private short touch_x,touch_y;
@@ -137,6 +139,8 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE); // Done by Guan Hui
 
         GameState = 0;
+        Energy = 50;
+        Delay_Timer = 0;
     }
     //------------------------------------------------------------
 
@@ -298,6 +302,19 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
                     EditScore.putInt("High Score", HighScore);
                     EditScore.commit();
                 }
+                /*Delay_Timer += dt;
+                if(Delay_Timer > 5)
+                    Energy -= 1;
+
+                if(Energy < 0)
+                {
+                    if(!showAlert)
+                    {
+                        AlertObj.RunAlert();
+                        showAlert = true;
+                    }
+                    startVibrate();
+                }*/
                 break;
             }
             case 1:
@@ -325,6 +342,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
     public void RenderScore(Canvas canvas) // Done by Guan Hui
     {
         RenderTextOnScreen(canvas,"Score: " + Integer.toString(Score),130, 105, 30);
+        RenderTextOnScreen(canvas,"Energy: " + Integer.toString(Score),130, 75, 30);
     }
 
     public void RenderGameplay(Canvas canvas)
@@ -414,12 +432,6 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
             case MotionEvent.ACTION_DOWN:
             {
                 toast.show();
-                if(!showAlert)
-                {
-                    AlertObj.RunAlert();
-                    showAlert = true;
-                }
-                startVibrate();
                 break;
             }
             case MotionEvent.ACTION_MOVE:
