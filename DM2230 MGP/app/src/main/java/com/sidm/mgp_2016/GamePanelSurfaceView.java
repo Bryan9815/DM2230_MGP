@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -46,12 +47,18 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
     int ScreenWidth, ScreenHeight;
 
     public float FPS;
-    long dt;
+    public float dt;
 
     private short GameState;
 
     // Paint object
     Paint paint = new Paint();
+
+    // 5) bitmap array to stores 4 images of the spaceship
+    private Bitmap[] ship = new Bitmap[4];
+
+    // 6) Variable as an index to keep track of the spaceship images
+    private short shipIndex = 0;
 
     // Font
     Typeface Font;
@@ -71,6 +78,8 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
 
     //Score
     private int Score;
+    private int Energy;
+    private int tempEnergy;
 
     //Touch position
     private short touch_x,touch_y;
@@ -90,6 +99,20 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
     AlertDialog.Builder alert = null;
     private Alert AlertObj;
     Activity activityTracker;
+
+    // High Score
+    SharedPreferences SharePrefScore;
+    SharedPreferences.Editor EditScore;
+    SharedPreferences SharePrefHighScore;
+    SharedPreferences.Editor EditHighScore;
+    int HighScore;
+
+    // Player Name
+    SharedPreferences SharePrefName;
+    SharedPreferences.Editor EditName;
+    SharedPreferences SharePrefHighName;
+    SharedPreferences.Editor EditHighName;
+    String PlayerName;
 
     //int i1 = r.nextInt(max - min + 1) + min;
 
@@ -123,13 +146,20 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         // Make the GamePanel focusable so it can handle events
         setFocusable(true);
 
-        Score = 0;
-
         v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE); // Done by Guan Hui
+        
+        Score = 0;
+        GameState = 0;
+        Energy = 1000;
+        tempEnergy = Energy;
+
+        // 7) Load the images of the spaceships
+        ship[0] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_1)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
+        ship[1] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_2)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
+        ship[2] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_3)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
+        ship[3] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_4)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
     }
     //------------------------------------------------------------
-
-
 
     private void Sound_Init() // Done by Guan Hui
     {
@@ -138,7 +168,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         BGM.start();
     }
 
-    public void startVibrate()
+    public void startVibrate() // Done by Guan Hui
     {
         long pattern[] = {0,50,0};
         v.vibrate(pattern,-1);
@@ -148,9 +178,9 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
     public void stopVibrate()
     {
         v.cancel();
-    }
+    } // Done by Guan Hui
 
-    public void ToastMessage(Context context)
+    public void ToastMessage(Context context) // Done by Bryan
     {
         // For Toast
         toast_Text = "HIT!";
@@ -158,7 +188,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         toast = Toast.makeText(context, toast_Text, toast_Time);
     }
 
-    public void AlertInit(Activity activity)
+    public void AlertInit(Activity activity) // Done by Bryan
     {
         // To track an activity
         activityTracker = activity;
@@ -180,7 +210,10 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         input.setFilters(FilterArray);
 
         // Set up the alert dialog
+        alert.setTitle("Game Over");
+        alert.setMessage("Please enter your name");
         alert.setCancelable(false);
+
         alert.setView(input);
 
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener()
@@ -188,11 +221,45 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
             // do something when the button is clicked
             public void onClick(DialogInterface arg0, int arg1)
             {
+                PlayerName = input.getText().toString();
+                if(Score > HighScore)
+                {
+                    EditHighName.putString("High Player Name", PlayerName);
+                    EditHighName.commit();
+                }
+                else
+                {
+                    EditName.putString("Player Name", PlayerName);
+                    EditName.commit();
+                }
+                if (Score > HighScore)
+                {
+                    HighScore = Score;
+                    EditHighScore.putInt("High Score", HighScore);
+                    EditHighScore.commit();
+                }
                 Intent intent = new Intent();
-                intent.setClass(getContext(), MainMenu.class);
+                intent.setClass(getContext(), ScorePage.class);
                 activityTracker.startActivity(intent);
             }
         });
+    }
+
+    public void SharedPreferencesInit() // Done by Bryan
+    {
+        SharePrefScore = getContext().getSharedPreferences("Current Score", Context.MODE_PRIVATE);
+        EditScore = SharePrefScore.edit();
+        
+        SharePrefHighScore = getContext().getSharedPreferences("High Score", Context.MODE_PRIVATE);
+        EditHighScore = SharePrefHighScore.edit();
+        HighScore = SharePrefHighScore.getInt("High Score", 0);
+
+        SharePrefName = getContext().getSharedPreferences("Player Name", Context.MODE_PRIVATE);
+        EditName = SharePrefName.edit();
+        PlayerName = "Player";
+
+        SharePrefHighName = getContext().getSharedPreferences("High Player Name", Context.MODE_PRIVATE);
+        EditHighName = SharePrefHighName.edit();
     }
 
     //constructor for this GamePanelSurfaceView class
@@ -205,6 +272,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         Sound_Init();
         ToastMessage(context);
         AlertInit(activity);
+        SharedPreferencesInit();
     }
 
     //must implement inherited abstract methods
@@ -247,10 +315,10 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
 
     }
 
-    //public void update(){
     public void update(float dt, float fps)
     {
         FPS = fps;
+        this.dt = dt;
 
         switch (GameState)
         {
@@ -262,7 +330,45 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
                 {
                     bgX = 0;
                 }
+                // Done by Bryan
+                // Energy and Score stuff
+                // ************************************
+                if (tempEnergy >= (Energy + 50))
+                {
+                    tempEnergy = Energy;
+                    Score++;
+                }
+                if(tempEnergy < Energy)
+                    tempEnergy = Energy;
+                if(Energy > 0)
+                    Energy -= 1;
+                else
+                {
+                    if(!showAlert)
+                    {
+                        AlertObj.RunAlert();
+                        showAlert = true;
 
+                        EditScore.putInt("Current Score", Score);
+                        EditScore.commit();
+                    }
+                    startVibrate();
+                }
+                // Character
+                shipIndex++;
+                shipIndex %= 4;
+                mY += 10;
+
+                if(mY >= ScreenHeight)
+                {
+                    if(!showAlert)
+                    {
+                        AlertObj.RunAlert();
+                        showAlert = true;
+                    }
+                    startVibrate();
+                }
+                // ************************************
                 break;
             }
             case 1:
@@ -284,28 +390,14 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
             case 1:
                 RenderGameplay(canvas);
                 break;
-
         }
     }
     public void RenderScore(Canvas canvas) // Done by Guan Hui
     {
         RenderTextOnScreen(canvas,"Score: " + Integer.toString(Score),130, 105, 30);
+        RenderTextOnScreen(canvas,"Energy: " + Integer.toString(Energy),130, 45, 30);
+        RenderTextOnScreen(canvas,"Temp Energy: " + Integer.toString(tempEnergy),300, 45, 30);
     }
-
-    /*public void RenderBubbles(Canvas canvas) // Done by Bryan
-    {
-        canvas.drawBitmap(Bubble_Background,0,0,null);
-        *//*if (Bubble_active == true)
-        {
-            canvas.drawBitmap(Bubble_bitmap,ScreenWidth/2,ScreenHeight/2,null);
-            canvas.drawBitmap(Bubble_bitmap,(ScreenWidth/2) - (ScreenWidth/5),ScreenHeight/2,null);
-        }*//*
-        for (int i = 0; i < ListOfBubbles.size(); i++)
-        {
-            if (ListOfBubbles.get(i).Active)
-                canvas.drawBitmap(redBubble[ListOfBubbles.get(i).Anim],ListOfBubbles.get(i).Position_x,ListOfBubbles.get(i).Position_y,null);
-        }
-    }*/
 
     public void RenderGameplay(Canvas canvas)
     {
@@ -322,6 +414,9 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
             {
                 canvas.drawBitmap(scaledbg, bgX, bgY, null);
                 canvas.drawBitmap(scaledbg, bgX + ScreenWidth, bgY, null);
+
+                // 8) Draw the spaceships
+                canvas.drawBitmap(ship[shipIndex], mX, mY, null);
 
                 RenderScore(canvas);
                 //FPS
@@ -381,23 +476,6 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         return false;
     }
 
-    public boolean CheckSphereCollision(int ball_x, int ball_y, int scale, int x2, int y2, int scale2) // Done by Bryan
-    {
-        return false;
-    }
-
-    public boolean CheckSphereOverlap(int ball_x1, int ball_y1, int scale1, int ball_x2, int ball_y2, int scale2)
-    {
-        float Difference_X = ball_x2 - ball_x1;
-        float Difference_Y = ball_y2 - ball_y1;
-        float distanceSquared = Difference_X * Difference_X + Difference_Y * Difference_Y;
-        float combinedRadius = scale1 + scale2;
-
-        if(distanceSquared <= combinedRadius * combinedRadius)
-            return true;
-        else
-            return false;
-    }
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
@@ -411,12 +489,6 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
             case MotionEvent.ACTION_DOWN:
             {
                 toast.show();
-                if(!showAlert)
-                {
-                    AlertObj.RunAlert();
-                    showAlert = true;
-                }
-                startVibrate();
                 break;
             }
             case MotionEvent.ACTION_MOVE:
