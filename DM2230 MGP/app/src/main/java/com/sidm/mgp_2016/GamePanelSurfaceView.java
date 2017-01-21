@@ -240,6 +240,11 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
                     EditHighScore.putInt("High Score", HighScore);
                     EditHighScore.commit();
                 }
+                else
+                {
+                    EditScore.putInt("Current Score", Score);
+                    EditScore.commit();
+                }
                 Intent intent = new Intent();
                 intent.setClass(getContext(), ScorePage.class);
                 activityTracker.startActivity(intent);
@@ -344,19 +349,15 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
                 }
                 if(tempEnergy < Energy)
                     tempEnergy = Energy;
-                if(Energy > 0)
-                    Energy -= 1;
-                else
+                if(!showAlert)
                 {
-                    if(!showAlert)
-                    {
+                    if (Energy > 0)
+                        Energy -= 1;
+                    else {
                         AlertObj.RunAlert();
                         showAlert = true;
-
-                        EditScore.putInt("Current Score", Score);
-                        EditScore.commit();
+                        startVibrate();
                     }
-                    startVibrate();
                 }
                 // Character
                 shipIndex++;
