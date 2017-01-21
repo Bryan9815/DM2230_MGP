@@ -79,6 +79,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     //Score
     private int Score;
     private int Energy;
+    private int MaxEnergy;
     private int tempEnergy;
 
     //Touch position
@@ -153,7 +154,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         
         Score = 0;
         GameState = 0;
-        Energy = 1000;
+        MaxEnergy = 1000;
+        Energy = MaxEnergy;
         tempEnergy = Energy;
 
         Platform_Manager = new PlatformManager(ScreenWidth,ScreenHeight);
@@ -339,6 +341,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 // Done by Bryan
                 // Energy and Score stuff
                 // ************************************
+                if(Energy >= MaxEnergy)
+                    Energy  = MaxEnergy;
                 if (tempEnergy >= (Energy + 50))
                 {
                     tempEnergy = Energy;
