@@ -73,6 +73,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
     //Score
     private int Score;
     private int Energy;
+    private int tempEnergy;
 
     //Touch position
     private short touch_x,touch_y;
@@ -139,6 +140,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
 
         GameState = 0;
         Energy = 1000;
+        tempEnergy = Energy;
     }
     //------------------------------------------------------------
 
@@ -290,16 +292,24 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
             {
                 // 4) An update function to update the game
                 bgX -= 500 * dt; //Change the number of panning speed
-                if (bgX < -ScreenWidth)
-                {
+                if (bgX < -ScreenWidth) {
                     bgX = 0;
                 }
-                if(Score > HighScore)
-                {
+                if (Score > HighScore) {
                     HighScore = Score;
                     EditScore.putInt("High Score", HighScore);
                     EditScore.commit();
                 }
+                // Done by Bryan
+                // Energy and Score stuff
+                // ************************************
+                if (tempEnergy >= (Energy + 50))
+                {
+                    tempEnergy = Energy;
+                    Score++;
+                }
+                if(tempEnergy < Energy)
+                    tempEnergy = Energy;
                 if(Energy > 0)
                     Energy -= 1;
                 else
@@ -311,6 +321,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
                     }
                     startVibrate();
                 }
+                // ************************************
                 break;
             }
             case 1:
@@ -332,13 +343,13 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
             case 1:
                 RenderGameplay(canvas);
                 break;
-
         }
     }
     public void RenderScore(Canvas canvas) // Done by Guan Hui
     {
         RenderTextOnScreen(canvas,"Score: " + Integer.toString(Score),130, 105, 30);
         RenderTextOnScreen(canvas,"Energy: " + Integer.toString(Energy),130, 45, 30);
+        RenderTextOnScreen(canvas,"Temp Energy: " + Integer.toString(tempEnergy),300, 45, 30);
     }
 
     public void RenderGameplay(Canvas canvas)
