@@ -54,6 +54,12 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
     // Paint object
     Paint paint = new Paint();
 
+    // 5) bitmap array to stores 4 images of the spaceship
+    private Bitmap[] ship = new Bitmap[4];
+
+    // 6) Variable as an index to keep track of the spaceship images
+    private short shipIndex = 0;
+
     // Font
     Typeface Font;
 
@@ -97,11 +103,15 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
     // High Score
     SharedPreferences SharePrefScore;
     SharedPreferences.Editor EditScore;
+    SharedPreferences SharePrefHighScore;
+    SharedPreferences.Editor EditHighScore;
     int HighScore;
 
     // Player Name
     SharedPreferences SharePrefName;
     SharedPreferences.Editor EditName;
+    SharedPreferences SharePrefHighName;
+    SharedPreferences.Editor EditHighName;
     String PlayerName;
 
     //int i1 = r.nextInt(max - min + 1) + min;
@@ -137,10 +147,17 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         setFocusable(true);
 
         v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE); // Done by Guan Hui
-
+        
+        Score = 0;
         GameState = 0;
         Energy = 1000;
         tempEnergy = Energy;
+
+        // 7) Load the images of the spaceships
+        ship[0] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_1)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
+        ship[1] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_2)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
+        ship[2] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_3)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
+        ship[3] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_4)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
     }
     //------------------------------------------------------------
 
@@ -205,9 +222,22 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
             public void onClick(DialogInterface arg0, int arg1)
             {
                 PlayerName = input.getText().toString();
-                EditName.putString("Player Name", PlayerName);
-                EditName.commit();
-
+                if(Score > HighScore)
+                {
+                    EditHighName.putString("High Player Name", PlayerName);
+                    EditHighName.commit();
+                }
+                else
+                {
+                    EditName.putString("Player Name", PlayerName);
+                    EditName.commit();
+                }
+                if (Score > HighScore)
+                {
+                    HighScore = Score;
+                    EditHighScore.putInt("High Score", HighScore);
+                    EditHighScore.commit();
+                }
                 Intent intent = new Intent();
                 intent.setClass(getContext(), ScorePage.class);
                 activityTracker.startActivity(intent);
@@ -217,15 +247,19 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
 
     public void SharedPreferencesInit() // Done by Bryan
     {
-        SharePrefScore = getContext().getSharedPreferences("High Score", Context.MODE_PRIVATE);
+        SharePrefScore = getContext().getSharedPreferences("Current Score", Context.MODE_PRIVATE);
         EditScore = SharePrefScore.edit();
-        Score = 0;
-        HighScore = SharePrefScore.getInt("High Score", 0);
+        
+        SharePrefHighScore = getContext().getSharedPreferences("High Score", Context.MODE_PRIVATE);
+        EditHighScore = SharePrefHighScore.edit();
+        HighScore = SharePrefHighScore.getInt("High Score", 0);
 
         SharePrefName = getContext().getSharedPreferences("Player Name", Context.MODE_PRIVATE);
         EditName = SharePrefName.edit();
         PlayerName = "Player";
-        PlayerName = SharePrefName.getString("Player Name", "DEFAULT");
+
+        SharePrefHighName = getContext().getSharedPreferences("High Player Name", Context.MODE_PRIVATE);
+        EditHighName = SharePrefHighName.edit();
     }
 
     //constructor for this GamePanelSurfaceView class
@@ -292,13 +326,9 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
             {
                 // 4) An update function to update the game
                 bgX -= 500 * dt; //Change the number of panning speed
-                if (bgX < -ScreenWidth) {
+                if (bgX < -ScreenWidth)
+                {
                     bgX = 0;
-                }
-                if (Score > HighScore) {
-                    HighScore = Score;
-                    EditScore.putInt("High Score", HighScore);
-                    EditScore.commit();
                 }
                 // Done by Bryan
                 // Energy and Score stuff
@@ -313,6 +343,23 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
                 if(Energy > 0)
                     Energy -= 1;
                 else
+                {
+                    if(!showAlert)
+                    {
+                        AlertObj.RunAlert();
+                        showAlert = true;
+
+                        EditScore.putInt("Current Score", Score);
+                        EditScore.commit();
+                    }
+                    startVibrate();
+                }
+                // Character
+                shipIndex++;
+                shipIndex %= 4;
+                mY += 10;
+
+                if(mY >= ScreenHeight)
                 {
                     if(!showAlert)
                     {
@@ -367,6 +414,9 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
             {
                 canvas.drawBitmap(scaledbg, bgX, bgY, null);
                 canvas.drawBitmap(scaledbg, bgX + ScreenWidth, bgY, null);
+
+                // 8) Draw the spaceships
+                canvas.drawBitmap(ship[shipIndex], mX, mY, null);
 
                 RenderScore(canvas);
                 //FPS

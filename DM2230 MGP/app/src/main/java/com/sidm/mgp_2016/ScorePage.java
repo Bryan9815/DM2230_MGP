@@ -12,13 +12,17 @@ import android.widget.Button;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 public class ScorePage extends Activity implements OnClickListener // Done by Bryan
 {
     private Button Btn_Return;
 
     // Define Shared Preferences
     SharedPreferences SharePrefScore;
+    SharedPreferences SharePrefHighScore;
     SharedPreferences SharePrefName;
+    SharedPreferences SharePrefHighName;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -36,20 +40,32 @@ public class ScorePage extends Activity implements OnClickListener // Done by Br
         Btn_Return.setOnClickListener(this);
 
         // Define a text view for display score
-        TextView scoreText;
-        scoreText = (TextView)findViewById(R.id.Score);
+        TextView CurrentScoreText ;
+        CurrentScoreText = (TextView)findViewById(R.id.Current_Score);
+
+        TextView HighScoreText;
+        HighScoreText = (TextView)findViewById(R.id.High_Score);
 
         // Retrieve high score and player name
         int HighScore = 0;
+        int CurrentScore = 0;
         String PlayerName = "Player";
+        String HighPlayerName = "Player";
 
-        SharePrefScore = getSharedPreferences("High Score", Context.MODE_PRIVATE);
-        HighScore = SharePrefScore.getInt("High Score", 0);
+        SharePrefScore = getSharedPreferences("Current Score", Context.MODE_PRIVATE);
+        CurrentScore = SharePrefScore.getInt("Current Score", 0);
+
+        SharePrefHighScore = getSharedPreferences("High Score", Context.MODE_PRIVATE);
+        HighScore = SharePrefHighScore.getInt("High Score", 0);
 
         SharePrefName = getSharedPreferences("Player Name", Context.MODE_PRIVATE);
         PlayerName = SharePrefName.getString("Player Name", "DEFAULT");
 
-        scoreText.setText(String.format(PlayerName + ": " + HighScore));
+        SharePrefHighName = getSharedPreferences("High Player Name", Context.MODE_PRIVATE);
+        HighPlayerName = SharePrefHighName.getString("High Player Name", "DEFAULT");
+
+        CurrentScoreText.setText(String.format("Current Score: " + PlayerName + ": " + CurrentScore));
+        HighScoreText.setText(String.format("High Score: " + HighPlayerName + ": " + HighScore));
     }
 
     public void onClick(View v)
