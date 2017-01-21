@@ -6,10 +6,10 @@ import android.content.Context;
  * Created by guanhui1998 on 5/12/2016.
  */
 
-public class ParticleSystem extends Randomiser
+public class ParticleSystem
 {
-    public ParticleSystem(Context context) {
-        super(context);
+    public ParticleSystem() {
+
     }
 
     public class Particle
