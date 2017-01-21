@@ -31,7 +31,7 @@ import android.widget.Toast;
 import java.util.Random;
 import java.util.Vector;
 
-public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolder.Callback {
+public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
     // Implement this interface to receive information about changes to the surface.
 
     protected static final String TAG = null;
@@ -116,6 +116,9 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
 
     //int i1 = r.nextInt(max - min + 1) + min;
 
+    //Platforms
+    PlatformManager Platform_Manager;
+
     // Done by guan hui-------------------------------------------
     private Bitmap create_BitMap(int img, int scale_x, int scale_y)
     {
@@ -152,6 +155,9 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
         GameState = 0;
         Energy = 1000;
         tempEnergy = Energy;
+
+        Platform_Manager = new PlatformManager(ScreenWidth,ScreenHeight);
+        Platform_Manager.Init();
 
         // 7) Load the images of the spaceships
         ship[0] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_1)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
@@ -369,6 +375,8 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
                     startVibrate();
                 }
                 // ************************************
+
+                Platform_Manager.Update(dt);
                 break;
             }
             case 1:
@@ -418,6 +426,7 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
                 // 8) Draw the spaceships
                 canvas.drawBitmap(ship[shipIndex], mX, mY, null);
 
+                RenderPlatforms(canvas);
                 RenderScore(canvas);
                 //FPS
                 RenderTextOnScreen(canvas, "FPS: " + FPS, 130, 75, 30);
@@ -440,6 +449,14 @@ public class GamePanelSurfaceView extends ParticleSystem implements SurfaceHolde
                 // Score
                 RenderTextOnScreen(canvas,"Score: " + Integer.toString(Score),ScreenWidth/4, ScreenHeight/4*3, 80);
             }
+        }
+    }
+
+    private void RenderPlatforms(Canvas canvas)
+    {
+        for (int i = 0; i < Platform_Manager.PlatformList.size(); i++)
+        {
+            canvas.drawBitmap(ship[shipIndex], Platform_Manager.PlatformList.get(i).Position.a, Platform_Manager.PlatformList.get(i).Position.b, null);
         }
     }
 

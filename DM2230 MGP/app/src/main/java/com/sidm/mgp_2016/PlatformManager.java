@@ -1,5 +1,7 @@
 package com.sidm.mgp_2016;
 
+import android.content.Context;
+
 import java.util.Vector;
 
 /**
@@ -8,15 +10,26 @@ import java.util.Vector;
 
 public class PlatformManager {
 
-    private class Platform
+    public class Platform
     {
         private float length;
-        private Vector3 Position;
-        int ScreenWidth;
-        boolean Destroy = false;
-        public void Init(int screenwidth)
+        public Vector3 Position;
+        private int ScreenWidth,ScreenHeight;
+        private int offset;
+        public boolean Destroy = false;
+
+        public Platform()
+        {}
+
+        public void Init(int screenwidth, int screenheight)
         {
+
+            Randomiser rand = new Randomiser();
             ScreenWidth = screenwidth;
+            ScreenHeight = screenheight;
+            Destroy = false;
+            offset = ScreenWidth/4;
+            Position = new Vector3((float)ScreenWidth + offset, (ScreenHeight/2) + rand.getRandomFloat((float)-ScreenHeight/4,(float)ScreenHeight/4),0.f );
         }
 
         public void Update(double dt)
@@ -27,21 +40,43 @@ public class PlatformManager {
         }
     }
 
-    private int ScreenWidth;
-    private Vector<Platform> PlatformList;
+    private int ScreenWidth,ScreenHeight;
+    public Vector<Platform> PlatformList;
+    private float Platform_spawn_timer;
 
-    public PlatformManager(int screenwidth)
+
+    public PlatformManager(int screenwidth, int screenheight)
     {
         ScreenWidth = screenwidth;
+        ScreenHeight = screenheight;
     }
 
     public void Init()
     {
         PlatformList = new Vector<Platform>();
+        Platform_spawn_timer = 0.f;
     }
 
     public void Update(double dt)
     {
-
+        if (Platform_spawn_timer < 1.5f)
+            Platform_spawn_timer += dt;
+        else
+        {
+            Platform_spawn_timer = 0.f;
+            Platform temp = new Platform();
+            temp.Init(ScreenWidth,ScreenHeight);
+            PlatformList.add(temp);
+        }
+        for (int i = 0; i < PlatformList.size(); i++)
+        {
+            PlatformList.get(i).Update(dt);
+            if (PlatformList.get(i).Destroy)
+            {
+                PlatformList.remove(i);
+                //continue;
+            }
+        }
     }
+
 }
