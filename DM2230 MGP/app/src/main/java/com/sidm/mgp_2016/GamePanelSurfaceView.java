@@ -26,6 +26,8 @@ import android.os.Vibrator;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Random;
+
 
 public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
     // Implement this interface to receive information about changes to the surface.
@@ -37,9 +39,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     // 1) Variables used for background rendering
     private Bitmap bg, scaledbg;
 
-    //Stone Animation
-    //private SpriteAnimation stone_anim;
-
     int ScreenWidth, ScreenHeight;
 
     public float FPS;
@@ -50,12 +49,14 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     // Paint object
     Paint paint = new Paint();
 
-    // 5) bitmap array to stores 4 images of the spaceChar
+    // Character
     private Bitmap[] Char = new Bitmap[4];
-
-    // 6) Variable as an index to keep track of the spaceChar images
     private short CharIndex = 0;
     private int charPosX = 100, charPosY = 0;
+
+    //Sprite Animation
+    private SpriteAnimation Coin_Anim;
+    private int CoinPosX = 300, CoinPosY = 300;
 
     // Buttons
     private Bitmap JumpButton, SlideButton;
@@ -134,8 +135,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         // Font
         Font = Typeface.createFromAsset(getContext().getAssets(), "fonts/cambriaz.ttf");
 
-        // Week 7 Load images for Flying Stone animation
-        //stone_anim = new SpriteAnimation(Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.flystar)), (int) (ScreenWidth)/4, (int) (ScreenHeight)/10, true), 320, 64, 5, 5);
+        // Week 7 Load images for animation
+        Coin_Anim = new SpriteAnimation(Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.coin)), (int) (ScreenWidth)/4, (int) (ScreenHeight)/10, true), 320, 64, 5, 5);
         // Create the game loop thread
         myThread = new GameThread(getHolder(), this);
         // Make the GamePanel focusable so it can handle events
@@ -341,6 +342,14 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 {
                     bgX = 0;
                 }
+                Coin_Anim.update(System.currentTimeMillis());
+                if (CheckCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), CoinPosX, CoinPosY, Coin_Anim.getSpriteWidth(), Coin_Anim.getSpriteHeight()))
+                {
+                    Random random = new Random();
+
+                    CoinPosX = random.nextInt(ScreenWidth - 50);
+                    CoinPosY = random.nextInt(ScreenHeight - 50);
+                }
                 // Done by Bryan
                 // ************************************
                 if(!showAlert)
@@ -423,6 +432,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 canvas.drawBitmap(Char[CharIndex], charPosX, charPosY, null);
                 canvas.drawBitmap(JumpButton, jbPosX, jbPosY, null);
                 canvas.drawBitmap(SlideButton, sbPosX, sbPosY, null);
+
+                Coin_Anim.draw(canvas);
+                Coin_Anim.setX(CoinPosX);
+                Coin_Anim.setY(CoinPosY);
 
                 RenderPlatforms(canvas);
                 RenderScore(canvas);
