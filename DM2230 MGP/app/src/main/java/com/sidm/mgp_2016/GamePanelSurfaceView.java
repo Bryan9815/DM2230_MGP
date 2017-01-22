@@ -386,7 +386,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 }
                 // ************************************
 
-                Platform_Manager.Update(dt,mX,mY,OnGround);
+                OnGround = Platform_Manager.Update(dt,mX,mY);
                 break;
             }
             case 1:

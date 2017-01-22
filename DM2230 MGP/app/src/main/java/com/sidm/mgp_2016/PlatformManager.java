@@ -33,12 +33,12 @@ public class PlatformManager {
             Position = new Vector3((float)ScreenWidth + offset, (ScreenHeight/2) + rand.getRandomFloat((float)-ScreenHeight/4,(float)ScreenHeight/4),0.f );
         }
 
-        public void Update(double dt,short player_x,short player_y,boolean OnGround)
+        public boolean Update(double dt,short player_x,short player_y)
         {
             if (Position.a < -ScreenWidth)
             {
                 Destroy = true;
-                return;
+                return false;
             }
             Position.a -= 500 * dt;
 
@@ -47,11 +47,12 @@ public class PlatformManager {
                 if (player_x >= Position.a - length/2 && player_x <= Position.a + length/2 && player_y == (short)Position.b - 5)
                 {
                     player_y = (short)Position.b;
-                    OnGround = true;
-                    return;
+                    //OnGround = true;
+
+                    return true;
                 }
             }
-
+            return false;
         }
     }
 
@@ -72,7 +73,7 @@ public class PlatformManager {
         Platform_spawn_timer = 0.f;
     }
 
-    public void Update(double dt, short player_x,short player_y,boolean OnGround)
+    public boolean Update(double dt, short player_x,short player_y)
     {
         if (Platform_spawn_timer < 1.5f)
             Platform_spawn_timer += dt;
@@ -83,16 +84,21 @@ public class PlatformManager {
             temp.Init(ScreenWidth,ScreenHeight);
             PlatformList.add(temp);
         }
-        OnGround = false;
+        boolean temp = false;
+
         for (int i = 0; i < PlatformList.size(); i++)
         {
-            PlatformList.get(i).Update(dt,player_x,player_y,OnGround);
+            if (PlatformList.get(i).Update(dt,player_x,player_y))
+            {
+                temp = true;
+            }
             if (PlatformList.get(i).Destroy)
             {
                 PlatformList.remove(i);
                 //continue;
             }
         }
+        return temp;
     }
 
 }
