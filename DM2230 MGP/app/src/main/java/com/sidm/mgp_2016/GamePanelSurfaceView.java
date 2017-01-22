@@ -11,14 +11,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.transition.Slide;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -27,9 +26,8 @@ import android.os.Vibrator;
 import android.widget.EditText;
 import android.widget.Toast;
 
-
 import java.util.Random;
-import java.util.Vector;
+
 
 public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
     // Implement this interface to receive information about changes to the surface.
@@ -41,9 +39,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     // 1) Variables used for background rendering
     private Bitmap bg, scaledbg;
 
-    //Stone Animation
-    //private SpriteAnimation stone_anim;
-
     int ScreenWidth, ScreenHeight;
 
     public float FPS;
@@ -54,29 +49,25 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     // Paint object
     Paint paint = new Paint();
 
-    // 5) bitmap array to stores 4 images of the spaceship
-    private Bitmap[] ship = new Bitmap[4];
+    // Character
+    private Bitmap[] Char = new Bitmap[4];
+    private short CharIndex = 0;
+    private int charPosX = 100, charPosY = 0;
 
-    // 6) Variable as an index to keep track of the spaceship images
-    private short shipIndex = 0;
+    //Sprite Animation
+    private SpriteAnimation Coin_Anim;
+    private int CoinPosX = 300, CoinPosY = 300;
+
+    // Buttons
+    private Bitmap JumpButton, SlideButton;
+    private int jbPosX, jbPosY, sbPosX, sbPosY;
 
     // Font
     Typeface Font;
 
     private short bgX = 0, bgY = 0;
 
-    private short mX = 100, mY = 0;
-
     public boolean OnGround = false;
-
-    private int aX = 300, aY = 300;
-
-    //Bubble variables
-    private boolean Bubble_active;
-    private Bitmap Bubble_bitmap, Bubble_Background;
-    private float timer = 0;
-    // Red Bubble Index
-    private Bitmap[] redBubble = new Bitmap[5];
 
     //Score
     private int Score;
@@ -127,6 +118,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     {
         return Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), img),scale_x,scale_y,true);
     }
+    //------------------------------------------------------------
 
     private void Standard_Init(Context context)
     {
@@ -145,8 +137,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         // Font
         Font = Typeface.createFromAsset(getContext().getAssets(), "fonts/cambriaz.ttf");
 
-        // Week 7 Load images for Flying Stone animation
-        //stone_anim = new SpriteAnimation(Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.flystar)), (int) (ScreenWidth)/4, (int) (ScreenHeight)/10, true), 320, 64, 5, 5);
+        // Week 7 Load images for animation
+        Coin_Anim = new SpriteAnimation(Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.coin)), (int) (ScreenWidth)/4, (int) (ScreenHeight)/10, true), 320, 64, 5, 5);
         // Create the game loop thread
         myThread = new GameThread(getHolder(), this);
         // Make the GamePanel focusable so it can handle events
@@ -160,16 +152,23 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         Energy = MaxEnergy;
         tempEnergy = Energy;
 
+        sbPosX = 75;
+        sbPosY = 875;
+
+        jbPosX = (ScreenWidth - 275);
+        jbPosY = 875;
+
         Platform_Manager = new PlatformManager(ScreenWidth,ScreenHeight);
         Platform_Manager.Init();
 
-        // 7) Load the images of the spaceships
-        ship[0] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_1)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
-        ship[1] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_2)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
-        ship[2] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_3)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
-        ship[3] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_4)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
+        // Load the images to bitmap
+        Char[0] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_1)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
+        Char[1] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_2)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
+        Char[2] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_3)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
+        Char[3] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_4)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
+        JumpButton = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.jump_button)), (int)(ScreenWidth) / 10, (int) (ScreenWidth) / 10, true);
+        SlideButton = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.slide_button)), (int)(ScreenWidth) / 10, (int) (ScreenWidth) / 10, true);
     }
-    //------------------------------------------------------------
 
     private void Sound_Init() // Done by Guan Hui
     {
@@ -345,6 +344,14 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 {
                     bgX = 0;
                 }
+                Coin_Anim.update(System.currentTimeMillis());
+                if (CheckCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), CoinPosX, CoinPosY, Coin_Anim.getSpriteWidth(), Coin_Anim.getSpriteHeight()))
+                {
+                    Random random = new Random();
+
+                    CoinPosX = random.nextInt(ScreenWidth - 50);
+                    CoinPosY = random.nextInt(ScreenHeight - 50);
+                }
                 // Done by Bryan
                 // ************************************
                 if(!showAlert)
@@ -369,12 +376,16 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     }
 
                     // Character
-                    shipIndex++;
-                    shipIndex %= 4;
+                    CharIndex++;
+                    CharIndex %= 4;
                     if (!OnGround)
-                        mY += 10;
+                        charPosY += 20;
+                    else
+                    {
+                        int temp;
+                    }
 
-                    if(mY >= ScreenHeight)
+                    if(charPosY >= ScreenHeight)
                     {
                         if(!showAlert)
                         {
@@ -385,12 +396,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     }
                 }
                 // ************************************
-
-                OnGround = Platform_Manager.Update(dt,mX,mY);
-                break;
-            }
-            case 1:
-            {
+                OnGround = Platform_Manager.Update(dt,charPosX, charPosY);
                 break;
             }
         }
@@ -399,13 +405,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     // Rendering is done on Canvas
     public void doDraw(Canvas canvas)
     {
-
         switch (GameState)
         {
             case 0:
-                RenderGameplay(canvas);
-                break;
-            case 1:
                 RenderGameplay(canvas);
                 break;
         }
@@ -432,9 +434,14 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             {
                 canvas.drawBitmap(scaledbg, bgX, bgY, null);
                 canvas.drawBitmap(scaledbg, bgX + ScreenWidth, bgY, null);
+                
+                canvas.drawBitmap(Char[CharIndex], charPosX, charPosY, null);
+                canvas.drawBitmap(JumpButton, jbPosX, jbPosY, null);
+                canvas.drawBitmap(SlideButton, sbPosX, sbPosY, null);
 
-                // 8) Draw the spaceships
-                canvas.drawBitmap(ship[shipIndex], mX, mY, null);
+                Coin_Anim.draw(canvas);
+                Coin_Anim.setX(CoinPosX);
+                Coin_Anim.setY(CoinPosY);
 
                 RenderPlatforms(canvas);
                 RenderScore(canvas);
@@ -449,16 +456,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
                 break;
             }
-            case 1: // Done by Bryan
-            {
-                canvas.drawBitmap(Bubble_Background,0,0,null);
-                // Game State
-                RenderTextOnScreen(canvas, "Game State: " + GameState, 400, 75, 30);
-                // Game Over
-                RenderTextOnScreen(canvas, "Game Over", ScreenWidth/4, ScreenHeight/2, 100);
-                // Score
-                RenderTextOnScreen(canvas,"Score: " + Integer.toString(Score),ScreenWidth/4, ScreenHeight/4*3, 80);
-            }
         }
     }
 
@@ -466,7 +463,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     {
         for (int i = 0; i < Platform_Manager.PlatformList.size(); i++)
         {
-            canvas.drawBitmap(ship[shipIndex], Platform_Manager.PlatformList.get(i).Position.a, Platform_Manager.PlatformList.get(i).Position.b, null);
+            canvas.drawBitmap(Char[CharIndex], Platform_Manager.PlatformList.get(i).Position.a, Platform_Manager.PlatformList.get(i).Position.b, null);
         }
     }
 

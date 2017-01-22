@@ -33,7 +33,7 @@ public class PlatformManager {
             Position = new Vector3((float)ScreenWidth + offset, (ScreenHeight/2) + rand.getRandomFloat((float)-ScreenHeight/4,(float)ScreenHeight/4),0.f );
         }
 
-        public boolean Update(double dt,short player_x,short player_y)
+        public boolean Update(double dt,int player_x,int player_y)
         {
             if (Position.a < -ScreenWidth)
             {
@@ -42,13 +42,11 @@ public class PlatformManager {
             }
             Position.a -= 500 * dt;
 
-            if (player_y <= (short)Position.b - 5 && player_y > (short)Position.b - 25)
+            if (player_y <= (int)Position.b - 5 && player_y > (int)Position.b - 25)
             {
-                if (player_x >= Position.a - length/2 && player_x <= Position.a + length/2 && player_y == (short)Position.b - 5)
+                if (player_x >= Position.a - length/2 && player_x <= Position.a + length/2)
                 {
-                    player_y = (short)Position.b;
-                    //OnGround = true;
-
+                    player_y = (int)Position.b;
                     return true;
                 }
             }
@@ -73,7 +71,7 @@ public class PlatformManager {
         Platform_spawn_timer = 0.f;
     }
 
-    public boolean Update(double dt, short player_x,short player_y)
+    public boolean Update(double dt, int player_x,int player_y)
     {
         if (Platform_spawn_timer < 1.5f)
             Platform_spawn_timer += dt;
