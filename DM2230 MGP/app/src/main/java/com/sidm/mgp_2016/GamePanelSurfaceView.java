@@ -66,7 +66,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     Typeface Font;
 
     private short bgX = 0, bgY = 0;
-    
+
+    public boolean OnGround = false;
+
     //Score
     private int Score;
     private int Energy;
@@ -376,7 +378,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     // Character
                     CharIndex++;
                     CharIndex %= 4;
-                    charPosY += 10;
+                    if (!OnGround)
+                        charPosY += 10;
 
                     if(charPosY >= ScreenHeight)
                     {
@@ -390,7 +393,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 }
                 // ************************************
 
-                Platform_Manager.Update(dt);
+                Platform_Manager.Update(dt, charPosX, charPosY, OnGround);
                 break;
             }
         }
