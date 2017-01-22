@@ -67,6 +67,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     private short mX = 100, mY = 0;
 
+    public boolean OnGround = false;
+
     private int aX = 300, aY = 300;
 
     //Bubble variables
@@ -367,7 +369,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 // Character
                 shipIndex++;
                 shipIndex %= 4;
-                mY += 10;
+                if (!OnGround)
+                    mY += 10;
 
                 if(mY >= ScreenHeight)
                 {
@@ -380,7 +383,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 }
                 // ************************************
 
-                Platform_Manager.Update(dt);
+                Platform_Manager.Update(dt,mX,mY,OnGround);
                 break;
             }
             case 1:
