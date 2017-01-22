@@ -248,6 +248,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     EditHighScore.putInt("High Score", HighScore);
                     EditHighScore.commit();
                 }
+                else
+                {
+                    EditScore.putInt("Current Score", Score);
+                    EditScore.commit();
+                }
                 Intent intent = new Intent();
                 intent.setClass(getContext(), ScorePage.class);
                 activityTracker.startActivity(intent);
@@ -341,45 +346,43 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     bgX = 0;
                 }
                 // Done by Bryan
-                // Energy and Score stuff
                 // ************************************
-                if(Energy >= MaxEnergy)
-                    Energy  = MaxEnergy;
-                if (tempEnergy >= (Energy + 50))
+                if(!showAlert)
                 {
-                    tempEnergy = Energy;
-                    Score++;
-                }
-                if(tempEnergy < Energy)
-                    tempEnergy = Energy;
-                if(Energy > 0)
-                    Energy -= 1;
-                else
-                {
-                    if(!showAlert)
+                    // Energy and Score stuff
+                    if(Energy >= MaxEnergy)
+                        Energy  = MaxEnergy;
+                    if (tempEnergy >= (Energy + 50))
+                    {
+                        tempEnergy = Energy;
+                        Score++;
+                    }
+                    if(tempEnergy < Energy)
+                        tempEnergy = Energy;
+                    if (Energy > 0)
+                        Energy -= 1;
+                    else
                     {
                         AlertObj.RunAlert();
                         showAlert = true;
-
-                        EditScore.putInt("Current Score", Score);
-                        EditScore.commit();
+                        startVibrate();
                     }
-                    startVibrate();
-                }
-                // Character
-                shipIndex++;
-                shipIndex %= 4;
-                if (!OnGround)
-                    mY += 10;
 
-                if(mY >= ScreenHeight)
-                {
-                    if(!showAlert)
+                    // Character
+                    shipIndex++;
+                    shipIndex %= 4;
+                    if (!OnGround)
+                        mY += 10;
+
+                    if(mY >= ScreenHeight)
                     {
-                        AlertObj.RunAlert();
-                        showAlert = true;
+                        if(!showAlert)
+                        {
+                            AlertObj.RunAlert();
+                            showAlert = true;
+                        }
+                        startVibrate();
                     }
-                    startVibrate();
                 }
                 // ************************************
 
