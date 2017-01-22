@@ -27,7 +27,7 @@ public class PlatformManager {
             Randomiser rand = new Randomiser();
             ScreenWidth = screenwidth;
             ScreenHeight = screenheight;
-            length = 1030;
+            length = 2030;
             Destroy = false;
             offset = ScreenWidth/4;
             Position = new Vector3((float)ScreenWidth + offset, (ScreenHeight/2) + rand.getRandomFloat((float)-ScreenHeight/4,(float)ScreenHeight/4),0.f );

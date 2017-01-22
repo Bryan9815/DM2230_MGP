@@ -68,6 +68,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private short bgX = 0, bgY = 0;
 
     public boolean OnGround = false;
+    private boolean Jump = false;
+    private int jumpY;
 
     //Score
     private int Score;
@@ -379,12 +381,21 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     CharIndex++;
                     CharIndex %= 4;
                     if (!OnGround)
-                        charPosY += 20;
+                        charPosY += 5;
                     else
                     {
                         int temp;
                     }
 
+                    if(Jump)
+                    {
+                        charPosY -= 15;
+                        if(charPosY <= (jumpY - 200))
+                        {
+                            Jump = false;
+                            OnGround = false;
+                        }
+                    }
                     if(charPosY >= ScreenHeight)
                     {
                         if(!showAlert)
@@ -513,6 +524,14 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             case MotionEvent.ACTION_DOWN:
             {
                 toast.show();
+                if (CheckCollision(jbPosX, jbPosY, JumpButton.getWidth(), JumpButton.getHeight(), X, Y, 0, 0))
+                {
+                    if(OnGround)
+                    {
+                        jumpY = charPosY;
+                        Jump = true;
+                    }
+                }
                 break;
             }
             case MotionEvent.ACTION_MOVE:
