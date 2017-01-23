@@ -10,6 +10,7 @@ import java.util.Vector;
 
 public class PlatformManager {
 
+    GamePanelSurfaceView GamePanel;
     public class Platform
     {
         public float length;
@@ -42,7 +43,7 @@ public class PlatformManager {
             }
             Position.a -= 500 * dt;
 
-            if (player_y <= (int)Position.b - 5 && player_y > (int)Position.b - 15)
+            if (player_y <= (int)Position.b - 5 && player_y > (int)Position.b - 25)
             {
                 if (player_x >= Position.a - length/2 && player_x <= Position.a + length/2)
                 {
