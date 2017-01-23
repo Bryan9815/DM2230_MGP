@@ -169,10 +169,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         Char[3] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_4)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
         JumpButton = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.jump_button)), (int)(ScreenWidth) / 10, (int) (ScreenWidth) / 10, true);
         SlideButton = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.slide_button)), (int)(ScreenWidth) / 10, (int) (ScreenWidth) / 10, true);
-        PlatformImage = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.red_bubble1)), 2030, 108, true);
+        PlatformImage = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.test_platform)), 2030, 108, true);
 
         // Platform Manager
-        Platform_Manager = new PlatformManager(ScreenWidth,ScreenHeight);
+        Platform_Manager = new PlatformManager(ScreenWidth,ScreenHeight,PlatformImage.getWidth());
         Platform_Manager.Init();
     }
 
@@ -480,7 +480,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         {
             canvas.save();
             canvas.scale(1, 1);
-            canvas.drawBitmap(PlatformImage, Platform_Manager.PlatformList.get(i).Position.a, Platform_Manager.PlatformList.get(i).Position.b, null);
+            canvas.drawBitmap(PlatformImage, Platform_Manager.PlatformList.get(i).Position.a - PlatformImage.getWidth()/2, Platform_Manager.PlatformList.get(i).Position.b + PlatformImage.getHeight()/2, null);
             canvas.restore();
         }
     }

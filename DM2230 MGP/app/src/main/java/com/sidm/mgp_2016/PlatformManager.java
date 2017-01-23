@@ -22,13 +22,13 @@ public class PlatformManager {
         public Platform()
         {}
 
-        public void Init(int screenwidth, int screenheight)
+        public void Init(int screenwidth, int screenheight,float length)
         {
 
             Randomiser rand = new Randomiser();
             ScreenWidth = screenwidth;
             ScreenHeight = screenheight;
-            length = 2030;
+            this.length = length;
             Destroy = false;
             offset = ScreenWidth/4;
             Position = new Vector3((float)ScreenWidth + offset, (ScreenHeight/2) + rand.getRandomFloat((float)-ScreenHeight/4,(float)ScreenHeight/4),0.f );
@@ -58,12 +58,13 @@ public class PlatformManager {
     private int ScreenWidth,ScreenHeight;
     public Vector<Platform> PlatformList;
     private float Platform_spawn_timer;
+    public float Length;
 
-
-    public PlatformManager(int screenwidth, int screenheight)
+    public PlatformManager(int screenwidth, int screenheight, float length)
     {
         ScreenWidth = screenwidth;
         ScreenHeight = screenheight;
+        Length = length;
     }
 
     public void Init()
@@ -80,7 +81,7 @@ public class PlatformManager {
         {
             Platform_spawn_timer = 0.f;
             Platform temp = new Platform();
-            temp.Init(ScreenWidth,ScreenHeight);
+            temp.Init(ScreenWidth,ScreenHeight, Length);
             PlatformList.add(temp);
         }
         boolean temp = false;
