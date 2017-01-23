@@ -116,8 +116,12 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     SharedPreferences.Editor EditHighName;
     String PlayerName;
 
+
     //Health bar
     private Bitmap HealthBarIcon, HealthBarShadow, HealthBar;
+    // Pause
+    private Bitmap PauseB1, PauseB2;
+    boolean isPaused = false;
 
     //Platforms
     PlatformManager Platform_Manager;
@@ -167,7 +171,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         setFocusable(true);
 
         v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE); // Done by Guan Hui
-        
+
+        // Done by Bryan
+        // *****************************************************************************************
         Score = 0;
         GameState = 0;
         MaxEnergy = 1000;
@@ -188,6 +194,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         JumpButton = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.jump_button)), (int)(ScreenWidth) / 10, (int) (ScreenWidth) / 10, true);
         SlideButton = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.slide_button)), (int)(ScreenWidth) / 10, (int) (ScreenWidth) / 10, true);
         PlatformImage = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.test_platform)), 2030, 108, true);
+        PauseB1 = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.pause1)), (ScreenWidth/15), (ScreenHeight/10), true);
+        PauseB2 = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.pause2)), (ScreenWidth/15), (ScreenHeight/10), true);
+        // *****************************************************************************************
 
         //Health bar
         HealthBarIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_icon),(int) ScreenWidth/20,(int)ScreenHeight/20,true );
@@ -235,7 +244,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         toast = Toast.makeText(context, toast_Text, toast_Time);
     }
 
-    public void AlertInit(Activity activity) // Done by Bryan
+    // Done by Bryan
+    // ********************************************************************
+    public void AlertInit(Activity activity)
     {
         // To track an activity
         activityTracker = activity;
@@ -297,7 +308,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         });
     }
 
-    public void SharedPreferencesInit() // Done by Bryan
+    public void SharedPreferencesInit()
     {
         SharePrefScore = getContext().getSharedPreferences("Current Score", Context.MODE_PRIVATE);
         EditScore = SharePrefScore.edit();
@@ -313,6 +324,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         SharePrefHighName = getContext().getSharedPreferences("High Player Name", Context.MODE_PRIVATE);
         EditHighName = SharePrefHighName.edit();
     }
+    // ********************************************************************
 
     //must implement inherited abstract methods
     public void surfaceCreated(SurfaceHolder holder)
@@ -446,11 +458,19 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 break;
         }
     }
-    public void RenderScore(Canvas canvas) // Done by Guan Hui
+
+    public void RenderPause(Canvas canvas)
     {
-        RenderTextOnScreen(canvas,"Score: " + Integer.toString(Score),130, 105, 30);
-        RenderTextOnScreen(canvas,"Energy: " + Integer.toString(Energy),130, 45, 30);
-        RenderTextOnScreen(canvas,"Temp Energy: " + Integer.toString(tempEnergy),300, 45, 30);
+        // Draw Pause Button
+        if(isPaused)
+        {
+            canvas.drawBitmap(PauseB1, 1650, 25, null);
+            RenderTextOnScreen(canvas, "Paused Game", 750, 200, 50);
+        }
+        else
+        {
+            canvas.drawBitmap(PauseB2, 1650, 25, null);
+        }
     }
 
     public void RenderGameplay(Canvas canvas)
@@ -477,18 +497,22 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 Coin_Anim.setX(CoinPosX);
                 Coin_Anim.setY(CoinPosY);
 
+                RenderPause(canvas);
                 RenderPlatforms(canvas);
                 RenderHealthBar(canvas);
-                RenderScore(canvas);
                 //FPS
                 RenderTextOnScreen(canvas, "FPS: " + FPS, 130, 75, 30);
+                // Score
+                RenderTextOnScreen(canvas,"Score: " + Integer.toString(Score),130, 105, 30);
                 //Touch position
                 RenderTextOnScreen(canvas, "X: " + Short.toString(touch_x) + "   Y:" + Short.toString(touch_y), 130, 135, 30);
+                /*
+
                 //Timer
                 //RenderTextOnScreen(canvas, "Timer: " + (2 - timer), 130, 165, 30);
                 //Game State
                 RenderTextOnScreen(canvas, "Game State: " + GameState, 540, 75, 30);
-
+                */
                 break;
             }
         }
@@ -564,6 +588,19 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                         Jump = true;
                     }
                 }
+                if (CheckCollision(1650, 25, PauseB1.getWidth(), PauseB1.getHeight(), X, Y, 0, 0))
+                {
+                    if(!isPaused)
+                    {
+                        isPaused = true;
+                        //myThread.pause();
+                    }
+                    else if(isPaused)
+                    {
+                        isPaused = false;
+                        //myThread.unPause();
+                    }
+                }
                 break;
             }
             case MotionEvent.ACTION_MOVE:
@@ -572,6 +609,17 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             }
             case MotionEvent.ACTION_UP:
             {
+                if (CheckCollision(1650, 25, PauseB1.getWidth(), PauseB1.getHeight(), X, Y, 0, 0))
+                {
+                    if (isPaused)
+                    {
+                        myThread.pause();
+                    }
+                    else if (!isPaused)
+                    {
+                        myThread.unPause();
+                    }
+                }
                 break;
             }
         }return true;
