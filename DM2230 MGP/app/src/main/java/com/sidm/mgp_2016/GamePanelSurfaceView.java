@@ -25,9 +25,8 @@ import android.graphics.Paint;
 import android.os.Vibrator;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import java.util.Random;
-
+import com.facebook.FacebookSdk;
 
 public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
     // Implement this interface to receive information about changes to the surface.

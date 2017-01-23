@@ -94,7 +94,7 @@ public class Vector3 {
         this.c -= rhs.c;
     }
 
-    public Vector3 operator_Multiplb(float scalar)
+    public Vector3 operator_Multiply(float scalar)
     {
         Vector3 temp = new Vector3(0.f,0.f,0.f);
         temp.Set(this.a,this.b,this.c);
@@ -104,7 +104,7 @@ public class Vector3 {
         return temp;
     }
 
-    public void operator_MultiplbEquals(float scalar)
+    public void operator_MultiplyEquals(float scalar)
     {
         this.a *= scalar;
         this.b *= scalar;
