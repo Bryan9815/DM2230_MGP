@@ -116,7 +116,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     SharedPreferences.Editor EditHighName;
     String PlayerName;
 
-
+    //Health bar
+    private Bitmap HealthBarIcon, HealthBarShadow, HealthBar;
 
     //Platforms
     PlatformManager Platform_Manager;
@@ -127,6 +128,19 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         return Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), img),scale_x,scale_y,true);
     }
     //------------------------------------------------------------
+
+    //constructor for this GamePanelSurfaceView class
+    public GamePanelSurfaceView(Context context, Activity activity)
+    {
+        // Context is the current state of the application/object
+        super(context);
+
+        Standard_Init(context);
+        Sound_Init();
+        ToastMessage(context);
+        AlertInit(activity);
+        SharedPreferencesInit();
+    }
 
     private void Standard_Init(Context context)
     {
@@ -175,6 +189,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         SlideButton = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.slide_button)), (int)(ScreenWidth) / 10, (int) (ScreenWidth) / 10, true);
         PlatformImage = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.test_platform)), 2030, 108, true);
 
+        //Health bar
+        HealthBarIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_icon),(int) ScreenWidth/20,(int)ScreenHeight/20,true );
+        HealthBarIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_bar),(int) ScreenWidth/20,(int)ScreenHeight/20,true );
+        HealthBarIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_bar_shadow),(int) ScreenWidth/20,(int)ScreenHeight/20,true );
         // Platform Manager
         Platform_Manager = new PlatformManager(ScreenWidth,ScreenHeight,PlatformImage.getWidth());
         Platform_Manager.Init();
@@ -294,19 +312,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         SharePrefHighName = getContext().getSharedPreferences("High Player Name", Context.MODE_PRIVATE);
         EditHighName = SharePrefHighName.edit();
-    }
-
-    //constructor for this GamePanelSurfaceView class
-    public GamePanelSurfaceView(Context context, Activity activity)
-    {
-        // Context is the current state of the application/object
-        super(context);
-
-        Standard_Init(context);
-        Sound_Init();
-        ToastMessage(context);
-        AlertInit(activity);
-        SharedPreferencesInit();
     }
 
     //must implement inherited abstract methods
@@ -473,6 +478,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 Coin_Anim.setY(CoinPosY);
 
                 RenderPlatforms(canvas);
+                RenderHealthBar(canvas);
                 RenderScore(canvas);
                 //FPS
                 RenderTextOnScreen(canvas, "FPS: " + FPS, 130, 75, 30);
@@ -497,6 +503,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             canvas.drawBitmap(PlatformImage, Platform_Manager.PlatformList.get(i).Position.a - PlatformImage.getWidth()/2, Platform_Manager.PlatformList.get(i).Position.b + PlatformImage.getHeight()/2, null);
             canvas.restore();
         }
+    }
+
+    private void RenderHealthBar(Canvas canvas)
+    {
+        canvas.drawBitmap(HealthBarIcon,ScreenWidth/10,ScreenHeight/8,null);
     }
 
     // Week 7 Print text on screen
