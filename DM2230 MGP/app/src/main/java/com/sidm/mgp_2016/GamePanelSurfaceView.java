@@ -86,8 +86,12 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     //Sound
     //MediaPlayer SoundPlayer;
     MediaPlayer BGM;
+    SharedPreferences SharePrefVolume;
+    private int volume;
 
+    // Vibration
     Vibrator v;
+    SharedPreferences SharePrefVibration;
 
     // Week 13
     CharSequence toast_Text;
@@ -113,7 +117,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     SharedPreferences.Editor EditHighName;
     String PlayerName;
 
-    //int i1 = r.nextInt(max - min + 1) + min;
+
 
     //Platforms
     PlatformManager Platform_Manager;
@@ -180,15 +184,25 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private void Sound_Init() // Done by Guan Hui
     {
         BGM = MediaPlayer.create(getContext(),R.raw.kasger_reflections);
+        SharePrefVolume = getContext().getSharedPreferences("Volume", Context.MODE_PRIVATE);
+        volume = SharePrefVolume.getInt("Volume", 100);
+        BGM.setVolume(volume, volume);
         BGM.setLooping(true);
         BGM.start();
     }
 
     public void startVibrate() // Done by Guan Hui
     {
-        long pattern[] = {0,50,0};
-        v.vibrate(pattern,-1);
-        Log.v(TAG,"test if vibrate occurs");
+        SharePrefVibration = getContext().getSharedPreferences("VibrationToggle", Context.MODE_PRIVATE);
+        boolean vibrateToggle = SharePrefVibration.getBoolean("VibrationToggle", true);
+        if(vibrateToggle)
+        {
+            long pattern[] = {0, 50, 0};
+            v.vibrate(pattern, -1);
+            Log.v(TAG, "test if vibrate occurs");
+        }
+        else
+            return;
     }
 
     public void stopVibrate()
@@ -548,7 +562,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             }
             case MotionEvent.ACTION_UP:
             {
-                startVibrate();
                 break;
             }
         }return true;
