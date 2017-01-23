@@ -10,6 +10,7 @@ import java.util.Vector;
 
 public class PlatformManager {
 
+    GamePanelSurfaceView GamePanel;
     public class Platform
     {
         public float length;

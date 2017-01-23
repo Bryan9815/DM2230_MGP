@@ -62,6 +62,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private Bitmap JumpButton, SlideButton;
     private int jbPosX, jbPosY, sbPosX, sbPosY;
 
+    // Platform
+    public Bitmap PlatformImage;
+
     // Font
     Typeface Font;
 
@@ -160,9 +163,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         jbPosX = (ScreenWidth - 275);
         jbPosY = 875;
 
-        Platform_Manager = new PlatformManager(ScreenWidth,ScreenHeight);
-        Platform_Manager.Init();
-
         // Load the images to bitmap
         Char[0] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_1)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
         Char[1] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_2)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
@@ -170,6 +170,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         Char[3] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_4)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
         JumpButton = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.jump_button)), (int)(ScreenWidth) / 10, (int) (ScreenWidth) / 10, true);
         SlideButton = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.slide_button)), (int)(ScreenWidth) / 10, (int) (ScreenWidth) / 10, true);
+        PlatformImage = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.red_bubble1)), 2030, 108, true);
+
+        // Platform Manager
+        Platform_Manager = new PlatformManager(ScreenWidth,ScreenHeight);
+        Platform_Manager.Init();
     }
 
     private void Sound_Init() // Done by Guan Hui
@@ -474,7 +479,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     {
         for (int i = 0; i < Platform_Manager.PlatformList.size(); i++)
         {
-            canvas.drawBitmap(Char[CharIndex], Platform_Manager.PlatformList.get(i).Position.a, Platform_Manager.PlatformList.get(i).Position.b, null);
+            canvas.save();
+            canvas.scale(1, 1);
+            canvas.drawBitmap(PlatformImage, Platform_Manager.PlatformList.get(i).Position.a, Platform_Manager.PlatformList.get(i).Position.b, null);
+            canvas.restore();
         }
     }
 
