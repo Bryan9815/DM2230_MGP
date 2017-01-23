@@ -25,4 +25,39 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
+    <TextView
+        android:text="Volume: "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/volumeSlider_Text"
+        android:textSize="24sp"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="40dp"/>
+
+    <SeekBar
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="43dp"
+        android:layout_centerHorizontal="true"
+        android:max="100"
+        android:id="@+id/volumeSlider_Bar" />
+
+    <TextView
+        android:text="Vibration: "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_alignLeft="@id/Btn_Return"
+        android:id="@+id/vibrateToggle_Text"
+        android:textSize="24sp" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/vibrateToggle_Button"
+        android:checked="true"
+        android:layout_marginTop="92dp"
+        android:layout_marginLeft="285dp"
+        android:textOn="On"
+        android:textOff="Off" />
 </RelativeLayout>
