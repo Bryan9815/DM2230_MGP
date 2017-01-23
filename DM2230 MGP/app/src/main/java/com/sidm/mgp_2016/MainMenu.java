@@ -13,6 +13,7 @@ public class MainMenu extends Activity implements OnClickListener
 {
     private Button Btn_Start;
     private Button Btn_Options;
+    private Button Btn_HowToPlay;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -31,6 +32,9 @@ public class MainMenu extends Activity implements OnClickListener
 
         Btn_Options = (Button)findViewById(R.id.Btn_Options);
         Btn_Options.setOnClickListener(this);
+
+        Btn_HowToPlay = (Button)findViewById(R.id.Btn_HowToPlay);
+        Btn_HowToPlay.setOnClickListener(this);
     }
 
     public void onClick(View v)
@@ -43,6 +47,10 @@ public class MainMenu extends Activity implements OnClickListener
         else if (v == Btn_Options)
         {
             i.setClass(this, Options.class);
+        }
+        else if(v == Btn_HowToPlay)
+        {
+            i.setClass(this, HowToPlay.class);
         }
         startActivity(i);
     }
