@@ -13,6 +13,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+
+// Done by Bryan
+
 public class HowToPlay extends Activity implements OnClickListener
 {
     private Button Btn_Return;

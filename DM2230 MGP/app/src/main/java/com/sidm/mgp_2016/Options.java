@@ -10,8 +10,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.view.View.OnClickListener;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.ToggleButton;
+
+// Done by Bryan
 
 public class Options extends Activity implements OnClickListener
 {

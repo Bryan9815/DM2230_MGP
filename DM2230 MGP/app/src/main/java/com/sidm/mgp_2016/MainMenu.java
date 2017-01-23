@@ -9,6 +9,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.view.View.OnClickListener;
 
+// Done by Bryan
+
 public class MainMenu extends Activity implements OnClickListener
 {
     private Button Btn_Start;
