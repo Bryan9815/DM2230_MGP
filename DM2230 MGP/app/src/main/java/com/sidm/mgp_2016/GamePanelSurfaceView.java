@@ -52,6 +52,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private Bitmap[] Char = new Bitmap[4];
     private short CharIndex = 0;
     private int charPosX = 100, charPosY = 0;
+    private int velocity_y = 0;
 
     //Sprite Animation
     private SpriteAnimation Coin_Anim;
@@ -415,21 +416,26 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     // Character
                     CharIndex++;
                     CharIndex %= 4;
-                    if (!OnGround)
-                        charPosY += 5;
-                    else
+
+                    int acceleration = 10;
+                    velocity_y += acceleration * 0.3333;
+                    if(velocity_y >= 15)
+                    {
+                        velocity_y = 15;
+                    }
+
+                    charPosY += velocity_y * 0.3333;
+
+                    if(OnGround)
                     {
                         int temp;
                     }
 
                     if(Jump)
                     {
-                        charPosY -= 15;
-                        if(charPosY <= (jumpY - 200))
-                        {
-                            Jump = false;
-                            OnGround = false;
-                        }
+                        OnGround = false;
+                        velocity_y -= 40;
+                        Jump = false;
                     }
                     if(charPosY >= ScreenHeight)
                     {
