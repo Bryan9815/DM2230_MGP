@@ -72,7 +72,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     public boolean OnGround = false;
     private boolean Jump = false;
-    private int jumpY;
+
 
     //Score
     private int Score;
@@ -414,27 +414,25 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     }
 
                     // Character
+                    OnGround = Platform_Manager.Update(dt,charPosX, charPosY);
+                    if (velocity_y <= 1 && OnGround)
+                    {
+                        OnGround = false;
+                    }
                     CharIndex++;
                     CharIndex %= 4;
 
-                    int acceleration = 10;
-                    velocity_y += acceleration * 0.3333;
-                    if(velocity_y >= 15)
+                    int gravity = (ScreenHeight/6) / 4;
+                    velocity_y += gravity * 0.3333;
+                    if(velocity_y > 15)
                     {
                         velocity_y = 15;
                     }
-
-                    charPosY += velocity_y * 0.3333;
-
-                    if(OnGround)
-                    {
-                        int temp;
-                    }
-
+                    if (!OnGround)
+                        charPosY += velocity_y * 0.3333;
                     if(Jump)
                     {
-                        OnGround = false;
-                        velocity_y -= 40;
+                        velocity_y -= ScreenHeight/6;
                         Jump = false;
                     }
                     if(charPosY >= ScreenHeight)
@@ -448,7 +446,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     }
                 }
                 // ************************************
-                OnGround = Platform_Manager.Update(dt,charPosX, charPosY);
+
                 break;
             }
         }
@@ -602,9 +600,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 toast.show();
                 if (CheckCollision(jbPosX, jbPosY, JumpButton.getWidth(), JumpButton.getHeight(), X, Y, 0, 0))
                 {
-                    if(OnGround)
+                    if(OnGround && !Jump)
                     {
-                        jumpY = charPosY;
                         Jump = true;
                     }
                 }
