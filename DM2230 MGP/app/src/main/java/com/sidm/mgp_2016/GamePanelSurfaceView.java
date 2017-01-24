@@ -76,9 +76,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     //Score
     private int Score;
-    private int Energy;
-    private int MaxEnergy;
-    private int tempEnergy;
+    private double Energy;
+    private double MaxEnergy;
+    private double tempEnergy;
 
     //Touch position
     private short touch_x,touch_y;
@@ -390,6 +390,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     CoinPosX = random.nextInt(ScreenWidth - 50);
                     CoinPosY = random.nextInt(ScreenHeight - 50);
                 }
+
                 // Done by Bryan
                 // ************************************
                 if(!showAlert)
@@ -535,10 +536,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private void RenderEnergyBar(Canvas canvas)
     {
         float x = ScreenWidth/10, y = ScreenHeight/8;
-        RenderOnScreen(canvas,EnergyBarShadow,x + x/5,y + y/10,0,6,1.2f);
-        float temp = ((float)(Energy/MaxEnergy) * 6.f);
-        RenderOnScreen(canvas,EnergyBar,x + x/5,y + y/10,0,temp,1.2f);
-        canvas.drawBitmap(EnergyBarIcon,x,y,null);
+        RenderOnScreen(canvas, EnergyBarShadow, x + x/5,y + y/10, 0, 6, 1.2f);
+        float temp = (float)((Energy/MaxEnergy) * 6.f);
+        RenderOnScreen(canvas, EnergyBar, x + x/5, y + y/10, 0, temp, 1.2f);
+        canvas.drawBitmap(EnergyBarIcon, x, y, null);
     }
 
 
