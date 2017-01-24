@@ -376,25 +376,16 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         {
             case 0:
             {
-                // 4) An update function to update the game
-                bgX -= 500 * dt; //Change the number of panning speed
-                if (bgX < -ScreenWidth)
-                {
-                    bgX = 0;
-                }
-                Coin_Anim.update(System.currentTimeMillis());
-                if (CheckCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), CoinPosX, CoinPosY, Coin_Anim.getSpriteWidth(), Coin_Anim.getSpriteHeight()))
-                {
-                    Random random = new Random();
-
-                    CoinPosX = random.nextInt(ScreenWidth - 50);
-                    CoinPosY = random.nextInt(ScreenHeight - 50);
-                }
-
                 // Done by Bryan
                 // ************************************
                 if(!showAlert)
                 {
+                    bgX -= 500 * dt; //Change the number of panning speed
+                    if (bgX < -ScreenWidth)
+                    {
+                        bgX = 0;
+                    }
+                    Coin_Anim.update(System.currentTimeMillis());
                     // Energy and Score stuff
                     if(Energy >= MaxEnergy)
                         Energy  = MaxEnergy;
@@ -415,6 +406,14 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     }
 
                     // Character
+                    for(int i = 0; i < Platform_Manager.CandyList.size(); i++)
+                    {
+                        if (CheckCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), (int)Platform_Manager.CandyList.get(i).Position.a, (int)Platform_Manager.CandyList.get(i).Position.b, Coin_Anim.getSpriteWidth(), Coin_Anim.getSpriteHeight()))
+                        {
+                            Platform_Manager.CandyList.get(i).Destroy = true;
+                            Score += 2;
+                        }
+                    }
                     OnGround = Platform_Manager.Update(dt,charPosX, charPosY);
                     if (velocity_y <= 1 && OnGround)
                     {
@@ -498,12 +497,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 canvas.drawBitmap(JumpButton, jbPosX, jbPosY, null);
                 canvas.drawBitmap(SlideButton, sbPosX, sbPosY, null);
 
-                Coin_Anim.draw(canvas);
-                Coin_Anim.setX(CoinPosX);
-                Coin_Anim.setY(CoinPosY);
-
                 RenderPause(canvas);
                 RenderPlatforms(canvas);
+                RenderCandy(canvas);
                 RenderEnergyBar(canvas);
                 //FPS
                 RenderTextOnScreen(canvas, "FPS: " + FPS, 130, 75, 30);
@@ -533,6 +529,16 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
     }
 
+    private void RenderCandy(Canvas canvas)
+    {
+        for(int i = 0; i < Platform_Manager.CandyList.size(); i++)
+        {
+            float x = Platform_Manager.CandyList.get(i).Position.a - Coin_Anim.getSpriteWidth()/2,
+                    y = Platform_Manager.CandyList.get(i).Position.b + Coin_Anim.getSpriteHeight()/2;
+            RenderOnScreen(canvas, Coin_Anim, x, y, 0, 1, 1);
+        }
+    }
+
     private void RenderEnergyBar(Canvas canvas)
     {
         float x = ScreenWidth/10, y = ScreenHeight/8;
@@ -550,6 +556,16 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         canvas.rotate(rotate_degrees);
         canvas.scale(scale_x,scale_y);
         canvas.drawBitmap(bitmap,0,0,null);
+        canvas.restore();
+    }
+
+    public void RenderOnScreen(Canvas canvas,SpriteAnimation spriteAnimation,float translate_x,float translate_y, float rotate_degrees, float scale_x,float scale_y )
+    {
+        canvas.save();
+        canvas.translate(translate_x,translate_y);
+        canvas.rotate(rotate_degrees);
+        canvas.scale(scale_x,scale_y);
+        spriteAnimation.draw(canvas);
         canvas.restore();
     }
 

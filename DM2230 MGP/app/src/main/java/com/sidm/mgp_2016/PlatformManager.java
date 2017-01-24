@@ -24,7 +24,6 @@ public class PlatformManager {
 
         public void Init(int screenwidth, int screenheight,float length)
         {
-
             Randomiser rand = new Randomiser();
             ScreenWidth = screenwidth;
             ScreenHeight = screenheight;
@@ -55,10 +54,40 @@ public class PlatformManager {
         }
     }
 
+    public class Candy
+    {
+        public Vector3 Position;
+        public boolean Destroy = false;
+
+        public Candy()
+        {}
+
+        public void Init(float PlatformLength, float Platform_X, float Platform_Y)
+        {
+            Randomiser rand = new Randomiser();
+            float LowRange = Platform_X - PlatformLength/2;
+            float HighRange = Platform_X + PlatformLength/2;
+            Position = new Vector3(rand.getRandomFloat(LowRange, HighRange), Platform_Y - 108, 0.f);
+        }
+
+        public boolean Update(double dt, int player_x, int player_y)
+        {
+            if(Position.a < -ScreenWidth)
+            {
+                Destroy = true;
+                return false;
+            }
+            Position.a -= 500 * dt;
+            return false;
+        }
+    }
+
     private int ScreenWidth,ScreenHeight;
     public Vector<Platform> PlatformList;
+    public Vector<Candy> CandyList;
     private float Platform_spawn_timer;
     public float Length;
+    Randomiser rand = new Randomiser();
 
     public PlatformManager(int screenwidth, int screenheight, float length)
     {
@@ -70,6 +99,7 @@ public class PlatformManager {
     public void Init()
     {
         PlatformList = new Vector<Platform>();
+        CandyList = new Vector<Candy>();
         Platform_spawn_timer = 0.f;
     }
 
@@ -81,8 +111,11 @@ public class PlatformManager {
         {
             Platform_spawn_timer = 0.f;
             Platform temp = new Platform();
+            Candy temp2 = new Candy();
             temp.Init(ScreenWidth,ScreenHeight, Length);
             PlatformList.add(temp);
+            temp2.Init(Length, temp.Position.a, temp.Position.b);
+            CandyList.add(temp2);
         }
         boolean temp = false;
 
@@ -96,6 +129,17 @@ public class PlatformManager {
             {
                 PlatformList.remove(i);
                 //continue;
+            }
+        }
+        for (int i = 0; i < CandyList.size(); i++)
+        {
+            if (CandyList.get(i).Update(dt,player_x,player_y))
+            {
+                temp = true;
+            }
+            if (CandyList.get(i).Destroy)
+            {
+                CandyList.remove(i);
             }
         }
         return temp;
