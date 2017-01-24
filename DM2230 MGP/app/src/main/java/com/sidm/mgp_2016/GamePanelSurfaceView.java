@@ -117,8 +117,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     String PlayerName;
 
 
-    //Health bar
-    private Bitmap HealthBarIcon, HealthBarShadow, HealthBar;
+    //Energy bar
+    private Bitmap EnergyBarIcon, EnergyBarShadow, EnergyBar;
     // Pause
     private Bitmap PauseB1, PauseB2;
     boolean isPaused = false;
@@ -198,10 +198,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         PauseB2 = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.pause2)), (ScreenWidth/15), (ScreenHeight/10), true);
         // *****************************************************************************************
 
-        //Health bar
-        HealthBarIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_icon),(int) ScreenWidth/20,(int)ScreenHeight/20,true );
-        HealthBarIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_bar),(int) ScreenWidth/20,(int)ScreenHeight/20,true );
-        HealthBarIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_bar_shadow),(int) ScreenWidth/20,(int)ScreenHeight/20,true );
+        //Energy bar
+        EnergyBarIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_icon),(int) ScreenWidth/20,(int)ScreenWidth/20,true );
+        EnergyBar = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_bar),(int) ScreenWidth/20,(int)ScreenHeight/20,true );
+        EnergyBarShadow = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_bar_shadow),(int) ScreenWidth/20,(int)ScreenHeight/20,true );
         // Platform Manager
         Platform_Manager = new PlatformManager(ScreenWidth,ScreenHeight,PlatformImage.getWidth());
         Platform_Manager.Init();
@@ -499,7 +499,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
                 RenderPause(canvas);
                 RenderPlatforms(canvas);
-                RenderHealthBar(canvas);
+                RenderEnergyBar(canvas);
                 //FPS
                 RenderTextOnScreen(canvas, "FPS: " + FPS, 130, 75, 30);
                 // Score
@@ -522,16 +522,29 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     {
         for (int i = 0; i < Platform_Manager.PlatformList.size(); i++)
         {
-            canvas.save();
-            canvas.scale(1, 1);
-            canvas.drawBitmap(PlatformImage, Platform_Manager.PlatformList.get(i).Position.a - PlatformImage.getWidth()/2, Platform_Manager.PlatformList.get(i).Position.b + PlatformImage.getHeight()/2, null);
-            canvas.restore();
+            float x = Platform_Manager.PlatformList.get(i).Position.a - PlatformImage.getWidth()/2,
+                y = Platform_Manager.PlatformList.get(i).Position.b + PlatformImage.getHeight()/2;
+            RenderOnScreen(canvas,PlatformImage,x,y,0,1,1);
         }
     }
 
-    private void RenderHealthBar(Canvas canvas)
+    private void RenderEnergyBar(Canvas canvas)
     {
-        canvas.drawBitmap(HealthBarIcon,ScreenWidth/10,ScreenHeight/8,null);
+        float x = ScreenWidth/10, y = ScreenHeight/8;
+        RenderOnScreen(canvas,EnergyBarShadow,x + x/5,y + y/10,0,6,1.2f);
+        RenderOnScreen(canvas,EnergyBar,x + x/5,y + y/10,0,(float) (Energy/MaxEnergy) * 100 * 6,1.2f);
+        canvas.drawBitmap(EnergyBarIcon,x,y,null);
+    }
+
+
+    public void RenderOnScreen(Canvas canvas,Bitmap bitmap,float translate_x,float translate_y, float rotate_degrees, float scale_x,float scale_y )
+    {
+        canvas.save();
+        canvas.translate(translate_x,translate_y);
+        canvas.rotate(rotate_degrees);
+        canvas.scale(scale_x,scale_y);
+        canvas.drawBitmap(bitmap,0,0,null);
+        canvas.restore();
     }
 
     // Week 7 Print text on screen
