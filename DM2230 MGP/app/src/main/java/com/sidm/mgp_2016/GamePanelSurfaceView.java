@@ -25,7 +25,6 @@ import android.graphics.Paint;
 import android.os.Vibrator;
 import android.widget.EditText;
 import android.widget.Toast;
-import java.util.Random;
 import com.facebook.FacebookSdk;
 
 public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
@@ -44,6 +43,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     public float dt;
 
     private short GameState;
+
+    Randomiser rand = new Randomiser();
 
     // Paint object
     Paint paint = new Paint();
@@ -73,12 +74,17 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     public boolean OnGround = false;
     private boolean Jump = false;
 
-
-    //Score
+    //Score & Energy
     private int Score;
     private double Energy;
     private double MaxEnergy;
     private double tempEnergy;
+    private Bitmap EnergyPotion;
+    int EnergyPotionTimer = 200;
+    int EnergyPotionCounter = 1;
+    private int epPosX = ScreenWidth * 2, epPosY;
+    //Energy bar
+    private Bitmap EnergyBarIcon, EnergyBarShadow, EnergyBar;
 
     //Touch position
     private short touch_x,touch_y;
@@ -117,9 +123,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     SharedPreferences.Editor EditHighName;
     String PlayerName;
 
-
-    //Energy bar
-    private Bitmap EnergyBarIcon, EnergyBarShadow, EnergyBar;
     // Pause
     private Bitmap PauseB1, PauseB2;
     boolean isPaused = false;
@@ -197,7 +200,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         PlatformImage = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.test_platform)), 2030, 108, true);
         PauseB1 = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.pause1)), (ScreenWidth/15), (ScreenHeight/10), true);
         PauseB2 = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.pause2)), (ScreenWidth/15), (ScreenHeight/10), true);
-        // *****************************************************************************************
+        EnergyPotion = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.potion)), (ScreenWidth/15), (ScreenWidth/15), true);
+        
 
         //Energy bar
         EnergyBarIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_icon),(int) ScreenWidth/20,(int)ScreenWidth/20,true );
@@ -405,14 +409,30 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                         startVibrate();
                     }
 
+                    epPosX -= 500 * dt;
+                    if(EnergyPotionTimer > 0)
+                        EnergyPotionTimer -= 1;
+                    else
+                    {
+                        epPosX = ScreenWidth * 2;
+                        epPosY = rand.getRandomInt(100, ScreenHeight - 100);
+                        EnergyPotionTimer = 200 + (50 * EnergyPotionCounter);
+                    }
+
                     // Character
-                    for(int i = 0; i < Platform_Manager.CandyList.size(); i++)
+                    for(int i = 0; i < Platform_Manager.CandyList.size(); i++) // Collision with candies
                     {
                         if (CheckCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), (int)Platform_Manager.CandyList.get(i).Position.a, (int)Platform_Manager.CandyList.get(i).Position.b, Coin_Anim.getSpriteWidth(), Coin_Anim.getSpriteHeight()))
                         {
                             Platform_Manager.CandyList.get(i).Destroy = true;
                             Score += 2;
                         }
+                    }
+                    if (CheckCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), epPosX, epPosY, EnergyPotion.getWidth(), EnergyPotion.getHeight()))
+                    {
+                        EnergyPotionCounter += 1;
+                        Energy += 500;
+                        epPosX = -ScreenWidth * 2;
                     }
                     OnGround = Platform_Manager.Update(dt,charPosX, charPosY);
                     if (velocity_y <= 1 && OnGround)
@@ -496,6 +516,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 canvas.drawBitmap(Char[CharIndex], charPosX, charPosY, null);
                 canvas.drawBitmap(JumpButton, jbPosX, jbPosY, null);
                 canvas.drawBitmap(SlideButton, sbPosX, sbPosY, null);
+                if(epPosX >= -ScreenWidth)
+                    canvas.drawBitmap(EnergyPotion, epPosX, epPosY, null);
 
                 RenderPause(canvas);
                 RenderPlatforms(canvas);
