@@ -61,8 +61,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private int CoinPosX = 300, CoinPosY = 300;
 
     // Buttons
-    private Bitmap JumpButton, SlideButton;
-    private int jbPosX, jbPosY, sbPosX, sbPosY;
+    private Bitmap JumpButton, FallButton;
+    private int jbPosX, jbPosY, fbPosX, fbPosY;
 
     // Platform
     public Bitmap PlatformImage;
@@ -187,8 +187,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         Energy = MaxEnergy;
         tempEnergy = Energy;
 
-        sbPosX = 75;
-        sbPosY = 875;
+        fbPosX = 75;
+        fbPosY = 875;
 
         jbPosX = (ScreenWidth - 275);
         jbPosY = 875;
@@ -199,13 +199,12 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         Char[2] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_3)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
         Char[3] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_4)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
         JumpButton = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.jump_button)), (int)(ScreenWidth) / 10, (int) (ScreenWidth) / 10, true);
-        SlideButton = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.slide_button)), (int)(ScreenWidth) / 10, (int) (ScreenWidth) / 10, true);
+        FallButton = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.fall_button)), (int)(ScreenWidth) / 10, (int) (ScreenWidth) / 10, true);
         PlatformImage = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.test_platform)), 2030, 108, true);
         PauseB1 = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.pause1)), (ScreenWidth/15), (ScreenHeight/10), true);
         PauseB2 = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.pause2)), (ScreenWidth/15), (ScreenHeight/10), true);
         EnergyPotion = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.potion)), (ScreenWidth/15), (ScreenWidth/15), true);
-
-
+        
         //Energy bar
         EnergyBarIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_icon),(int) ScreenWidth/20,(int)ScreenWidth/20,true );
         EnergyBar = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_bar),(int) ScreenWidth/20,(int)ScreenHeight/20,true );
@@ -453,9 +452,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
                     int gravity = (ScreenHeight/6) / 4;
                     velocity_y += gravity * 0.3333;
-                    if(velocity_y > 15)
+                    if(velocity_y > 20)
                     {
-                        velocity_y = 15;
+                        velocity_y = 20;
                     }
                     if (!OnGround && HangTime < 0)
                         charPosY += velocity_y * 0.3333;
@@ -521,8 +520,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             {
                 canvas.drawBitmap(scaledbg, bgX, bgY, null);
                 canvas.drawBitmap(scaledbg, bgX + ScreenWidth, bgY, null);
-                
-
                 RenderPause(canvas);
                 RenderPlatforms(canvas);
                 RenderCandy(canvas);
@@ -532,7 +529,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
                 canvas.drawBitmap(Char[CharIndex], charPosX - Char[CharIndex].getWidth()/2, charPosY + Char[CharIndex].getHeight()/2, null);
                 canvas.drawBitmap(JumpButton, jbPosX, jbPosY, null);
-                canvas.drawBitmap(SlideButton, sbPosX, sbPosY, null);
+                canvas.drawBitmap(FallButton, fbPosX, fbPosY, null);
 
                 //FPS
                 RenderTextOnScreen(canvas, "FPS: " + FPS, 130, 75, 30);
@@ -684,6 +681,13 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     if(OnGround && !Jump)
                     {
                         Jump = true;
+                    }
+                }
+                if (CheckCollision(fbPosX, fbPosY, FallButton.getWidth(), FallButton.getHeight(), X, Y, 0, 0))
+                {
+                    if(OnGround && !Jump)
+                    {
+                        charPosY += 30;
                     }
                 }
                 if (CheckCollision(1650, 25, PauseB1.getWidth(), PauseB1.getHeight(), X, Y, 0, 0))
