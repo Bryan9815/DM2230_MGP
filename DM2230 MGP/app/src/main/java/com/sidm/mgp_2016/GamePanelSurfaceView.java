@@ -112,14 +112,14 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private Alert AlertObj;
     Activity activityTracker;
 
-    // High Score
+    // High Score, Done by Bryan
     SharedPreferences SharePrefScore;
     SharedPreferences.Editor EditScore;
     SharedPreferences SharePrefHighScore;
     SharedPreferences.Editor EditHighScore;
     int HighScore;
 
-    // Player Name
+    // Player Name, Done by Bryan
     SharedPreferences SharePrefName;
     SharedPreferences.Editor EditName;
     SharedPreferences SharePrefHighName;
@@ -291,6 +291,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 {
                     EditHighName.putString("High Player Name", PlayerName);
                     EditHighName.commit();
+                    EditName.putString("Player Name", PlayerName);
+                    EditName.commit();
                 }
                 else
                 {
@@ -302,6 +304,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     HighScore = Score;
                     EditHighScore.putInt("High Score", HighScore);
                     EditHighScore.commit();
+                    EditScore.putInt("Current Score", Score);
+                    EditScore.commit();
                 }
                 else
                 {
