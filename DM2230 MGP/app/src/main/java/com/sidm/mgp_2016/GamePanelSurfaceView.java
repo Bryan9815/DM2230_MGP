@@ -165,7 +165,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         Font = Typeface.createFromAsset(getContext().getAssets(), "fonts/cambriaz.ttf");
 
         // Week 7 Load images for animation
-        Coin_Anim = new SpriteAnimation(Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.coin)), (int) (ScreenWidth)/4, (int) (ScreenHeight)/10, true), 320, 64, 5, 5);
+        Coin_Anim = new SpriteAnimation(Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.coin)), (int) (ScreenWidth)/10, (int) (ScreenHeight)/10, true), 320, 64, 5, 5);
         // Create the game loop thread
         myThread = new GameThread(getHolder(), this);
         // Make the GamePanel focusable so it can handle events
@@ -408,13 +408,13 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     // Character
                     for(int i = 0; i < Platform_Manager.CandyList.size(); i++)
                     {
-                        if (CheckCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), (int)Platform_Manager.CandyList.get(i).Position.a, (int)Platform_Manager.CandyList.get(i).Position.b, Coin_Anim.getSpriteWidth(), Coin_Anim.getSpriteHeight()))
+                        if (CheckAABBCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), (int)Platform_Manager.CandyList.get(i).Position.a, (int)Platform_Manager.CandyList.get(i).Position.b, Coin_Anim.getSpriteWidth(), Coin_Anim.getSpriteHeight()))
                         {
                             Platform_Manager.CandyList.get(i).Destroy = true;
                             Score += 2;
                         }
                     }
-                    OnGround = Platform_Manager.Update(dt,charPosX, charPosY);
+                    OnGround = Platform_Manager.Update(dt,charPosX, charPosY + Char[CharIndex].getHeight()/2);
                     if (velocity_y <= 1 && OnGround)
                     {
                         OnGround = false;
@@ -493,7 +493,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 canvas.drawBitmap(scaledbg, bgX, bgY, null);
                 canvas.drawBitmap(scaledbg, bgX + ScreenWidth, bgY, null);
                 
-                canvas.drawBitmap(Char[CharIndex], charPosX, charPosY, null);
+                canvas.drawBitmap(Char[CharIndex], charPosX - Char[CharIndex].getWidth()/2, charPosY + Char[CharIndex].getHeight()/2, null);
                 canvas.drawBitmap(JumpButton, jbPosX, jbPosY, null);
                 canvas.drawBitmap(SlideButton, sbPosX, sbPosY, null);
 
@@ -534,7 +534,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         for(int i = 0; i < Platform_Manager.CandyList.size(); i++)
         {
             float x = Platform_Manager.CandyList.get(i).Position.a - Coin_Anim.getSpriteWidth()/2,
-                    y = Platform_Manager.CandyList.get(i).Position.b + Coin_Anim.getSpriteHeight()/2;
+                    y = Platform_Manager.CandyList.get(i).Position.b - Coin_Anim.getSpriteHeight()/2;
             RenderOnScreen(canvas, Coin_Anim, x, y, 0, 1, 1);
         }
     }
@@ -585,7 +585,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
     }
 
-    public boolean CheckCollision (int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) // Done by Bryan
+    public boolean CheckCollision (float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2) // Done by Bryan
     {
         //top left
         if (x2 >= x1 && x2 <= x1 + w1)
@@ -599,6 +599,36 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             if (y2 >= y1 && y2 <= y1 + h1)
                 return true;
         }
+        return false;
+    }
+
+    public boolean CheckSphericalCollision (float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2)
+    {
+        //aabb collision
+//        float dist_x = Math.abs(x1 - x2);
+//        float dist_y = Math.abs(y1 - y2);
+//
+//        if (dist_x < ((w1/2) + (w2/2)) && dist_y < ((w1/2) + (w2/2)))
+//            return  true;
+
+        Vector3 temp1 = new Vector3(x1, y1,0);
+        Vector3 temp2 = new Vector3(x2, y2,0);
+        float distsq = (temp1.operator_Minus(temp2)).LengthSquared();
+        float combined_radius_sq = (w1 + w2) * (w1 + w2);
+        if (distsq < combined_radius_sq)
+            return true;
+        return false;
+    }
+
+    public boolean CheckAABBCollision (float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2)
+    {
+        //aabb collision
+        float dist_x = Math.abs(x1 - x2);
+        float dist_y = Math.abs(y1 - y2);
+
+        if (dist_x < ((w1/2) + (w2/2)) && dist_y < ((w1/2) + (w2/2)))
+            return  true;
+
         return false;
     }
 
