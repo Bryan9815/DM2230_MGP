@@ -429,7 +429,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     // Character
                     for(int i = 0; i < Platform_Manager.CandyList.size(); i++) // Collision with candies
                     {
-                        if (CheckAABBCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), (int)Platform_Manager.CandyList.get(i).Position.a, (int)Platform_Manager.CandyList.get(i).Position.b, Coin_Anim.getSpriteWidth(), Coin_Anim.getSpriteHeight()))
+                        if (CheckSphericalCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), (int)Platform_Manager.CandyList.get(i).Position.a, (int)Platform_Manager.CandyList.get(i).Position.b, Coin_Anim.getSpriteWidth(), Coin_Anim.getSpriteHeight()))
                         {
                             Platform_Manager.CandyList.get(i).Destroy = true;
                             Score += 2;

@@ -81,6 +81,26 @@ public class PlatformManager {
         }
     }
 
+    public class Obstacle
+    {
+        public Vector3 Position;
+        public boolean Destroy = false;
+        Randomiser rand = new Randomiser();
+
+        public Obstacle(){}
+
+        public void Init(float PlatformLength, float Platform_X, float Platform_Y)
+        {
+
+            //Position = new Vector3(,Platform_Y,0.f);
+        }
+
+        public void Update()
+        {
+
+        }
+    }
+
     private int ScreenWidth,ScreenHeight;
     public Vector<Platform> PlatformList;
     public Vector<Candy> CandyList;
