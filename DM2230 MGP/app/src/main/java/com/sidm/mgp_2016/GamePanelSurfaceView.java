@@ -80,9 +80,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private double MaxEnergy;
     private double tempEnergy;
     private Bitmap EnergyPotion;
-    int EnergyPotionTimer = 200;
-    int EnergyPotionCounter = 1;
-    private int epPosX = ScreenWidth * 2, epPosY;
+    private int EnergyPotionTimer = 200;
+    private int EnergyPotionCounter = 1;
+    private boolean epSpawned = false;
+    private int epPosX = -ScreenWidth * 2;
+    private int epPosY = -100;
     //Energy bar
     private Bitmap EnergyBarIcon, EnergyBarShadow, EnergyBar;
 
@@ -201,7 +203,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         PauseB1 = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.pause1)), (ScreenWidth/15), (ScreenHeight/10), true);
         PauseB2 = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.pause2)), (ScreenWidth/15), (ScreenHeight/10), true);
         EnergyPotion = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.potion)), (ScreenWidth/15), (ScreenWidth/15), true);
-        
+
 
         //Energy bar
         EnergyBarIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_icon),(int) ScreenWidth/20,(int)ScreenWidth/20,true );
@@ -244,7 +246,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     public void ToastMessage(Context context) // Done by Bryan
     {
         // For Toast
-        toast_Text = "HIT!";
+        toast_Text = "Energy restored!";
         toast_Time = Toast.LENGTH_SHORT;
         toast = Toast.makeText(context, toast_Text, toast_Time);
     }
@@ -410,14 +412,17 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     }
 
                     epPosX -= 500 * dt;
-                    if(EnergyPotionTimer > 0)
+                    if(EnergyPotionTimer > 0 && !epSpawned)
                         EnergyPotionTimer -= 1;
-                    else
+                    else if(!epSpawned)
                     {
+                        epSpawned = true;
                         epPosX = ScreenWidth * 2;
                         epPosY = rand.getRandomInt(100, ScreenHeight - 100);
                         EnergyPotionTimer = 200 + (50 * EnergyPotionCounter);
                     }
+                    if(epPosX < -ScreenHeight && epSpawned)
+                        epPosX = ScreenWidth * 2;
 
                     // Character
                     for(int i = 0; i < Platform_Manager.CandyList.size(); i++) // Collision with candies
@@ -428,11 +433,13 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                             Score += 2;
                         }
                     }
-                    if (CheckCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), epPosX, epPosY, EnergyPotion.getWidth(), EnergyPotion.getHeight()))
+                    if (CheckCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), epPosX, epPosY, EnergyPotion.getWidth(), EnergyPotion.getHeight())) // Collision with Energy Potion
                     {
-                        EnergyPotionCounter += 1;
+                        toast.show();
                         Energy += 500;
+                        EnergyPotionCounter += 1;
                         epPosX = -ScreenWidth * 2;
+                        epSpawned = false;
                     }
                     OnGround = Platform_Manager.Update(dt,charPosX, charPosY);
                     if (velocity_y <= 1 && OnGround)
@@ -483,7 +490,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
     }
 
-    public void RenderPause(Canvas canvas)
+    public void RenderPause(Canvas canvas) // Done by Bryan
     {
         // Draw Pause Button
         if(isPaused)
@@ -636,7 +643,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         {
             case MotionEvent.ACTION_DOWN:
             {
-                toast.show();
+                // Done by Bryan
+                // ************************************************************************************************
                 if (CheckCollision(jbPosX, jbPosY, JumpButton.getWidth(), JumpButton.getHeight(), X, Y, 0, 0))
                 {
                     if(OnGround && !Jump)
@@ -657,6 +665,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                         //myThread.unPause();
                     }
                 }
+                // ************************************************************************************************
                 break;
             }
             case MotionEvent.ACTION_MOVE:
