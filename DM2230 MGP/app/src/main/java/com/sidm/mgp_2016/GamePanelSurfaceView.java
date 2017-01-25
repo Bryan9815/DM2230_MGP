@@ -54,6 +54,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private short CharIndex = 0;
     private int charPosX = 100, charPosY = 0;
     private int velocity_y = 0;
+    int HangTime = 50;
 
     //Sprite Animation
     private SpriteAnimation Coin_Anim;
@@ -386,6 +387,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 // ************************************
                 if(!showAlert)
                 {
+                    HangTime -= 1;
                     bgX -= 500 * dt; //Change the number of panning speed
                     if (bgX < -ScreenWidth)
                     {
@@ -402,9 +404,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     }
                     if(tempEnergy < Energy)
                         tempEnergy = Energy;
-                    if (Energy > 0)
+                    if (Energy > 0 && HangTime < 0)
                         Energy -= 1;
-                    else
+                    else if(Energy <= 0)
                     {
                         AlertObj.RunAlert();
                         showAlert = true;
@@ -455,7 +457,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     {
                         velocity_y = 15;
                     }
-                    if (!OnGround)
+                    if (!OnGround && HangTime < 0)
                         charPosY += velocity_y * 0.3333;
                     if(Jump)
                     {
@@ -523,13 +525,13 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 canvas.drawBitmap(Char[CharIndex], charPosX, charPosY, null);
                 canvas.drawBitmap(JumpButton, jbPosX, jbPosY, null);
                 canvas.drawBitmap(SlideButton, sbPosX, sbPosY, null);
-                if(epPosX >= -ScreenWidth)
-                    canvas.drawBitmap(EnergyPotion, epPosX, epPosY, null);
 
                 RenderPause(canvas);
                 RenderPlatforms(canvas);
                 RenderCandy(canvas);
                 RenderEnergyBar(canvas);
+                if(epPosX >= -ScreenWidth)
+                    canvas.drawBitmap(EnergyPotion, epPosX, epPosY, null);
                 //FPS
                 RenderTextOnScreen(canvas, "FPS: " + FPS, 130, 75, 30);
                 // Score
