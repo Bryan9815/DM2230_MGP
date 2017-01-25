@@ -429,7 +429,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     // Character
                     for(int i = 0; i < Platform_Manager.CandyList.size(); i++) // Collision with candies
                     {
-                        if (CheckSphericalCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), (int)Platform_Manager.CandyList.get(i).Position.a, (int)Platform_Manager.CandyList.get(i).Position.b, Coin_Anim.getSpriteWidth(), Coin_Anim.getSpriteHeight()))
+                        if (CheckAABBCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), (int)Platform_Manager.CandyList.get(i).Position.a, (int)Platform_Manager.CandyList.get(i).Position.b, Coin_Anim.getSpriteWidth(), Coin_Anim.getSpriteHeight()))
                         {
                             Platform_Manager.CandyList.get(i).Destroy = true;
                             Score += 2;
@@ -522,9 +522,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 canvas.drawBitmap(scaledbg, bgX, bgY, null);
                 canvas.drawBitmap(scaledbg, bgX + ScreenWidth, bgY, null);
                 
-                canvas.drawBitmap(Char[CharIndex], charPosX - Char[CharIndex].getWidth()/2, charPosY + Char[CharIndex].getHeight()/2, null);
-                canvas.drawBitmap(JumpButton, jbPosX, jbPosY, null);
-                canvas.drawBitmap(SlideButton, sbPosX, sbPosY, null);
 
                 RenderPause(canvas);
                 RenderPlatforms(canvas);
@@ -532,6 +529,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 RenderEnergyBar(canvas);
                 if(epPosX >= -ScreenWidth)
                     canvas.drawBitmap(EnergyPotion, epPosX, epPosY, null);
+
+                canvas.drawBitmap(Char[CharIndex], charPosX - Char[CharIndex].getWidth()/2, charPosY + Char[CharIndex].getHeight()/2, null);
+                canvas.drawBitmap(JumpButton, jbPosX, jbPosY, null);
+                canvas.drawBitmap(SlideButton, sbPosX, sbPosY, null);
+
                 //FPS
                 RenderTextOnScreen(canvas, "FPS: " + FPS, 130, 75, 30);
                 // Score
@@ -565,7 +567,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         for(int i = 0; i < Platform_Manager.CandyList.size(); i++)
         {
             float x = Platform_Manager.CandyList.get(i).Position.a - Coin_Anim.getSpriteWidth()/2,
-                    y = Platform_Manager.CandyList.get(i).Position.b - Coin_Anim.getSpriteHeight()/2;
+                    y = Platform_Manager.CandyList.get(i).Position.b + Coin_Anim.getSpriteHeight()/2;
             RenderOnScreen(canvas, Coin_Anim, x, y, 0, 1, 1);
         }
     }
