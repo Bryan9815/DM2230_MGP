@@ -25,7 +25,6 @@ import android.graphics.Paint;
 import android.os.Vibrator;
 import android.widget.EditText;
 import android.widget.Toast;
-import java.util.Random;
 import com.facebook.FacebookSdk;
 
 public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
@@ -45,6 +44,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     private short GameState;
 
+    Randomiser rand = new Randomiser();
+
     // Paint object
     Paint paint = new Paint();
 
@@ -53,6 +54,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private short CharIndex = 0;
     private int charPosX = 100, charPosY = 0;
     private int velocity_y = 0;
+    int HangTime = 50;
 
     //Sprite Animation
     private SpriteAnimation Coin_Anim;
@@ -73,12 +75,19 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     public boolean OnGround = false;
     private boolean Jump = false;
 
-
-    //Score
+    //Score & Energy
     private int Score;
     private double Energy;
     private double MaxEnergy;
     private double tempEnergy;
+    private Bitmap EnergyPotion;
+    private int EnergyPotionTimer = 200;
+    private int EnergyPotionCounter = 1;
+    private boolean epSpawned = false;
+    private int epPosX = -ScreenWidth * 2;
+    private int epPosY = -100;
+    //Energy bar
+    private Bitmap EnergyBarIcon, EnergyBarShadow, EnergyBar;
 
     //Touch position
     private short touch_x,touch_y;
@@ -117,9 +126,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     SharedPreferences.Editor EditHighName;
     String PlayerName;
 
-
-    //Energy bar
-    private Bitmap EnergyBarIcon, EnergyBarShadow, EnergyBar;
     // Pause
     private Bitmap PauseB1, PauseB2;
     boolean isPaused = false;
@@ -197,7 +203,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         PlatformImage = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.test_platform)), 2030, 108, true);
         PauseB1 = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.pause1)), (ScreenWidth/15), (ScreenHeight/10), true);
         PauseB2 = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.pause2)), (ScreenWidth/15), (ScreenHeight/10), true);
-        // *****************************************************************************************
+        EnergyPotion = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.potion)), (ScreenWidth/15), (ScreenWidth/15), true);
+
 
         //Energy bar
         EnergyBarIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_icon),(int) ScreenWidth/20,(int)ScreenWidth/20,true );
@@ -240,7 +247,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     public void ToastMessage(Context context) // Done by Bryan
     {
         // For Toast
-        toast_Text = "HIT!";
+        toast_Text = "Energy restored!";
         toast_Time = Toast.LENGTH_SHORT;
         toast = Toast.makeText(context, toast_Text, toast_Time);
     }
@@ -380,6 +387,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 // ************************************
                 if(!showAlert)
                 {
+                    HangTime -= 1;
                     bgX -= 500 * dt; //Change the number of panning speed
                     if (bgX < -ScreenWidth)
                     {
@@ -396,23 +404,44 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     }
                     if(tempEnergy < Energy)
                         tempEnergy = Energy;
-                    if (Energy > 0)
+                    if (Energy > 0 && HangTime < 0)
                         Energy -= 1;
-                    else
+                    else if(Energy <= 0)
                     {
                         AlertObj.RunAlert();
                         showAlert = true;
                         startVibrate();
                     }
 
+                    epPosX -= 500 * dt;
+                    if(EnergyPotionTimer > 0 && !epSpawned)
+                        EnergyPotionTimer -= 1;
+                    else if(!epSpawned)
+                    {
+                        epSpawned = true;
+                        epPosX = ScreenWidth * 2;
+                        epPosY = rand.getRandomInt(100, ScreenHeight - 100);
+                        EnergyPotionTimer = 200 + (50 * EnergyPotionCounter);
+                    }
+                    if(epPosX < -ScreenHeight && epSpawned)
+                        epPosX = ScreenWidth * 2;
+
                     // Character
-                    for(int i = 0; i < Platform_Manager.CandyList.size(); i++)
+                    for(int i = 0; i < Platform_Manager.CandyList.size(); i++) // Collision with candies
                     {
                         if (CheckAABBCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), (int)Platform_Manager.CandyList.get(i).Position.a, (int)Platform_Manager.CandyList.get(i).Position.b, Coin_Anim.getSpriteWidth(), Coin_Anim.getSpriteHeight()))
                         {
                             Platform_Manager.CandyList.get(i).Destroy = true;
                             Score += 2;
                         }
+                    }
+                    if (CheckCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), epPosX, epPosY, EnergyPotion.getWidth(), EnergyPotion.getHeight())) // Collision with Energy Potion
+                    {
+                        toast.show();
+                        Energy += 500;
+                        EnergyPotionCounter += 1;
+                        epPosX = -ScreenWidth * 2;
+                        epSpawned = false;
                     }
                     OnGround = Platform_Manager.Update(dt,charPosX, charPosY + Char[CharIndex].getHeight()/2);
                     if (velocity_y <= 1 && OnGround)
@@ -428,7 +457,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     {
                         velocity_y = 15;
                     }
-                    if (!OnGround)
+                    if (!OnGround && HangTime < 0)
                         charPosY += velocity_y * 0.3333;
                     if(Jump)
                     {
@@ -463,7 +492,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
     }
 
-    public void RenderPause(Canvas canvas)
+    public void RenderPause(Canvas canvas) // Done by Bryan
     {
         // Draw Pause Button
         if(isPaused)
@@ -501,6 +530,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 RenderPlatforms(canvas);
                 RenderCandy(canvas);
                 RenderEnergyBar(canvas);
+                if(epPosX >= -ScreenWidth)
+                    canvas.drawBitmap(EnergyPotion, epPosX, epPosY, null);
                 //FPS
                 RenderTextOnScreen(canvas, "FPS: " + FPS, 130, 75, 30);
                 // Score
@@ -644,7 +675,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         {
             case MotionEvent.ACTION_DOWN:
             {
-                toast.show();
+                // Done by Bryan
+                // ************************************************************************************************
                 if (CheckCollision(jbPosX, jbPosY, JumpButton.getWidth(), JumpButton.getHeight(), X, Y, 0, 0))
                 {
                     if(OnGround && !Jump)
@@ -665,6 +697,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                         //myThread.unPause();
                     }
                 }
+                // ************************************************************************************************
                 break;
             }
             case MotionEvent.ACTION_MOVE:
