@@ -91,19 +91,23 @@ public class PlatformManager {
 
         public void Init(float PlatformLength, float Platform_X, float Platform_Y)
         {
-
-            //Position = new Vector3(,Platform_Y,0.f);
+            Position = new Vector3(rand.getRandomFloat(Platform_X - PlatformLength/2, Platform_X + PlatformLength/2),Platform_Y,0.f);
         }
 
-        public void Update()
+        public void Update(double dt)
         {
-
+            if(Position.a < -ScreenWidth)
+            {
+                Destroy = true;
+            }
+            Position.a -= 500 * dt;
         }
     }
 
     private int ScreenWidth,ScreenHeight;
     public Vector<Platform> PlatformList;
     public Vector<Candy> CandyList;
+    public Vector<Obstacle> ObstacleList;
     private float Platform_spawn_timer;
     public float Length;
     Randomiser rand = new Randomiser();
@@ -119,6 +123,7 @@ public class PlatformManager {
     {
         PlatformList = new Vector<Platform>();
         CandyList = new Vector<Candy>();
+        ObstacleList = new Vector<Obstacle>();
         Platform_spawn_timer = 0.f;
     }
 
