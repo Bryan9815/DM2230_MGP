@@ -140,6 +140,9 @@ public class PlatformManager {
             PlatformList.add(temp);
             temp2.Init(Length, temp.Position.a, temp.Position.b - ScreenHeight/20);
             CandyList.add(temp2);
+            Obstacle obstacle = new Obstacle();
+            obstacle.Init(Length, temp.Position.a, temp.Position.b - ScreenHeight/20 - 108);
+            ObstacleList.add(obstacle);
         }
         boolean temp = false;
 
@@ -162,6 +165,12 @@ public class PlatformManager {
             {
                 CandyList.remove(i);
             }
+        }
+        for (int i = 0; i < ObstacleList.size(); i++)
+        {
+            ObstacleList.get(i).Update(dt);
+            if (ObstacleList.get(i).Destroy)
+                ObstacleList.remove(i);
         }
         return temp;
     }
