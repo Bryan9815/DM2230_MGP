@@ -55,7 +55,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private short CharIndex = 0;
     private int charPosX = 100, charPosY = 0;
     private int velocity_y = 0;
-    int HangTime = 90;
+    int HangTime = 160;
 
     //Sprite Animation
     private SpriteAnimation Coin_Anim;
@@ -135,6 +135,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     PlatformManager Platform_Manager;
     private Bitmap origin;
 
+    //Obstacles
+    private Bitmap obstacle;
+
     // Done by guan hui-------------------------------------------
     private Bitmap create_BitMap(int img, int scale_x, int scale_y)
     {
@@ -202,7 +205,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         Char[3] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_4)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
         JumpButton = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.jump_button)), (int)(ScreenWidth) / 10, (int) (ScreenWidth) / 10, true);
         FallButton = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.fall_button)), (int)(ScreenWidth) / 10, (int) (ScreenWidth) / 10, true);
-        PlatformImage = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.test_platform)), 930, 108, true);
+        PlatformImage = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.platform)), 930, 108, true);
         PauseB1 = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.pause1)), (ScreenWidth/15), (ScreenHeight/10), true);
         PauseB2 = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.pause2)), (ScreenWidth/15), (ScreenHeight/10), true);
         EnergyPotion = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.potion)), (ScreenWidth/15), (ScreenWidth/15), true);
@@ -215,6 +218,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         Platform_Manager = new PlatformManager(ScreenWidth,ScreenHeight,PlatformImage.getWidth());
         Platform_Manager.Init();
 
+        //Obstacle
+        obstacle = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.spike)), (int) (ScreenWidth)/14, (int) (ScreenWidth)/14, true);
         origin = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.point),(int) ScreenWidth/50,(int)ScreenWidth/50,true );
     }
 
@@ -450,6 +455,16 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                         epPosX = -ScreenWidth * 2;
                         epSpawned = false;
                     }
+
+                    for(int i = 0; i < Platform_Manager.ObstacleList.size(); i++) // Collision with candies
+                    {
+                        if (CheckAABBCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), (int)Platform_Manager.ObstacleList.get(i).Position.a, (int)Platform_Manager.ObstacleList.get(i).Position.b, obstacle.getWidth(), obstacle.getHeight()))
+                        {
+                            Platform_Manager.ObstacleList.get(i).Destroy = true;
+                            Energy -= 50;
+                        }
+                    }
+
                     OnGround = Platform_Manager.Update(dt,charPosX, charPosY + Char[CharIndex].getHeight()/2);
                     if (velocity_y <= 1 && OnGround)
                     {
@@ -530,6 +545,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 canvas.drawBitmap(scaledbg, bgX + ScreenWidth, bgY, null);
                 RenderPause(canvas);
                 RenderPlatforms(canvas);
+                RenderObstacles(canvas);
                 RenderCandy(canvas);
                 RenderEnergyBar(canvas);
                 if(epPosX >= -ScreenWidth)
@@ -569,6 +585,17 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
     }
 
+    private void RenderObstacles(Canvas canvas)
+    {
+        for (int i = 0; i < Platform_Manager.ObstacleList.size(); i++)
+        {
+            float x = Platform_Manager.ObstacleList.get(i).Position.a - obstacle.getWidth()/2,
+                    y = Platform_Manager.ObstacleList.get(i).Position.b - obstacle.getHeight()/2;
+            RenderOnScreen(canvas,obstacle,x,y,0,1,1);
+            RenderOnScreen(canvas, origin,Platform_Manager.ObstacleList.get(i).Position.a,Platform_Manager.ObstacleList.get(i).Position.b,0,1,1);
+        }
+    }
+
     private void RenderCandy(Canvas canvas)
     {
         for(int i = 0; i < Platform_Manager.CandyList.size(); i++)
@@ -576,7 +603,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             float x = Platform_Manager.CandyList.get(i).Position.a,
                     y = Platform_Manager.CandyList.get(i).Position.b;
             RenderOnScreen(canvas, Coin_Anim, x, y, 0, 1, 1);
-            RenderOnScreen(canvas, origin,Platform_Manager.CandyList.get(i).Position.a,Platform_Manager.CandyList.get(i).Position.b,0,1,1);
+            //RenderOnScreen(canvas, origin,Platform_Manager.CandyList.get(i).Position.a,Platform_Manager.CandyList.get(i).Position.b,0,1,1);
         }
     }
 
