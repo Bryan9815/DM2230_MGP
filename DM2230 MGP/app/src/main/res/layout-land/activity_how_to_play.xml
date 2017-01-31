@@ -26,7 +26,13 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:text="To be added"
+        android:text="The goal of the game is to survive for as long as possible and collect as much candy as you can along the way.
+
+The game ends when you either run out of energy or fall off the bottom of the screen.
+
+Running into spikes cause you to lose energy, and picking up the potions that spawn every once in a while will replenish your energy.
+
+The Fall Button will let you drop down from the platform that you are currently running on, and the Jump Button will let you jump ONLY while you are on the ground."
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
