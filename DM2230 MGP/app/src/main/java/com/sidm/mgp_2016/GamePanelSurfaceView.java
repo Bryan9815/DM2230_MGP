@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
@@ -54,7 +55,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private short CharIndex = 0;
     private int charPosX = 100, charPosY = 0;
     private int velocity_y = 0;
-    int HangTime = 50;
+    int HangTime = 90;
 
     //Sprite Animation
     private SpriteAnimation Coin_Anim;
@@ -132,6 +133,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     //Platforms
     PlatformManager Platform_Manager;
+    private Bitmap origin;
 
     // Done by guan hui-------------------------------------------
     private Bitmap create_BitMap(int img, int scale_x, int scale_y)
@@ -171,7 +173,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         Font = Typeface.createFromAsset(getContext().getAssets(), "fonts/cambriaz.ttf");
 
         // Week 7 Load images for animation
-        Coin_Anim = new SpriteAnimation(Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.coin)), (int) (ScreenWidth)/10, (int) (ScreenHeight)/10, true), 320, 64, 5, 5);
+        Coin_Anim = new SpriteAnimation(Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.coin)), (int) (ScreenWidth)/10, (int) (ScreenWidth)/10, true), 320, 64, 5, 5);
         // Create the game loop thread
         myThread = new GameThread(getHolder(), this);
         // Make the GamePanel focusable so it can handle events
@@ -212,6 +214,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         // Platform Manager
         Platform_Manager = new PlatformManager(ScreenWidth,ScreenHeight,PlatformImage.getWidth());
         Platform_Manager.Init();
+
+        origin = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.point),(int) ScreenWidth/50,(int)ScreenWidth/50,true );
     }
 
     private void Sound_Init() // Done by Guan Hui
@@ -531,7 +535,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 if(epPosX >= -ScreenWidth)
                     canvas.drawBitmap(EnergyPotion, epPosX, epPosY, null);
 
-                canvas.drawBitmap(Char[CharIndex], charPosX - Char[CharIndex].getWidth()/2, charPosY + Char[CharIndex].getHeight()/2, null);
+                canvas.drawBitmap(Char[CharIndex], charPosX - Char[CharIndex].getWidth()/2, charPosY - Char[CharIndex].getHeight()/2, null);
+
                 canvas.drawBitmap(JumpButton, jbPosX, jbPosY, null);
                 canvas.drawBitmap(FallButton, fbPosX, fbPosY, null);
 
@@ -558,8 +563,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         for (int i = 0; i < Platform_Manager.PlatformList.size(); i++)
         {
             float x = Platform_Manager.PlatformList.get(i).Position.a - PlatformImage.getWidth()/2,
-                y = Platform_Manager.PlatformList.get(i).Position.b + PlatformImage.getHeight()/2;
+                y = Platform_Manager.PlatformList.get(i).Position.b - PlatformImage.getHeight()/2;
             RenderOnScreen(canvas,PlatformImage,x,y,0,1,1);
+            //RenderOnScreen(canvas, origin,Platform_Manager.PlatformList.get(i).Position.a,Platform_Manager.PlatformList.get(i).Position.b,0,1,1);
         }
     }
 
@@ -567,9 +573,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     {
         for(int i = 0; i < Platform_Manager.CandyList.size(); i++)
         {
-            float x = Platform_Manager.CandyList.get(i).Position.a - Coin_Anim.getSpriteWidth()/2,
-                    y = Platform_Manager.CandyList.get(i).Position.b + Coin_Anim.getSpriteHeight()/2;
+            float x = Platform_Manager.CandyList.get(i).Position.a,
+                    y = Platform_Manager.CandyList.get(i).Position.b;
             RenderOnScreen(canvas, Coin_Anim, x, y, 0, 1, 1);
+            RenderOnScreen(canvas, origin,Platform_Manager.CandyList.get(i).Position.a,Platform_Manager.CandyList.get(i).Position.b,0,1,1);
         }
     }
 
