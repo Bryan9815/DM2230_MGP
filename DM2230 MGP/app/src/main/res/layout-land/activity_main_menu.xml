@@ -8,46 +8,46 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background = "@drawable/menu_background"
+    android:background = "@drawable/mainmenu_bg"
     android:orientation = "horizontal"
     tools:context="com.sidm.mgp_2016.MainMenu">
-
-    <Button
-        android:id="@+id/Btn_Start"
-        android:layout_width="150dp"
-    android:layout_height="50dp"
-    android:layout_marginRight="100dp"
-    android:layout_marginTop="50dp"
-    android:background="@drawable/button"
-    android:text="Start"
-    android:textSize="18dp"
-    android:textColor="#bdfcf2"
-    android:layout_alignParentEnd="true"
-    android:layout_marginEnd="39dp" />
-
-    <Button
-        android:id="@+id/Btn_Options"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:layout_marginRight="100dp"
-        android:layout_marginTop="125dp"
-        android:background="@drawable/button"
-        android:text="Options"
-        android:textSize="18dp"
-        android:textColor="#bdfcf2"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="39dp" />
 
     <Button
         android:id="@+id/Btn_HowToPlay"
         android:layout_width="150dp"
         android:layout_height="50dp"
         android:layout_marginRight="100dp"
-        android:layout_marginTop="200dp"
         android:background="@drawable/button"
         android:text="How To Play"
         android:textSize="18dp"
         android:textColor="#bdfcf2"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="39dp" />
+        android:layout_marginEnd="111dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:id="@+id/Btn_Start"
+        android:layout_width="150dp"
+    android:layout_height="50dp"
+    android:layout_marginRight="100dp"
+        android:background="@drawable/button"
+    android:text="Start"
+    android:textSize="18dp"
+    android:textColor="#bdfcf2"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="60dp" />
+
+    <Button
+        android:id="@+id/Btn_Options"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_marginRight="100dp"
+        android:background="@drawable/button"
+        android:text="Options"
+        android:textSize="18dp"
+        android:textColor="#bdfcf2"
+        android:layout_marginEnd="44dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@+id/Btn_HowToPlay" />
 </RelativeLayout>
