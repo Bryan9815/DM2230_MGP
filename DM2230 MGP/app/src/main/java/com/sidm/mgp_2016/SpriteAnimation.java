@@ -75,7 +75,7 @@ public class SpriteAnimation
     }
 
     public int getSpriteWidth() {
-        return spriteWidth;
+        return bitmap.getWidth();
     }
 
     public void setSpriteWidth(int spriteWidth) {
@@ -125,9 +125,8 @@ public class SpriteAnimation
 
     public void draw(Canvas canvas)
     {
-        // where to draw the sprite
-        Rect destRect = new Rect(getX(), getY(), getX() + spriteWidth, getY()
-                + spriteHeight);
+        // where to draw the sprite : left,top,right,bottom
+        Rect destRect = new Rect(-bitmap.getWidth()/2, -bitmap.getHeight()/2, bitmap.getWidth()/2, bitmap.getHeight()/2);
         canvas.drawBitmap(bitmap, sourceRect, destRect, null);
     }
 

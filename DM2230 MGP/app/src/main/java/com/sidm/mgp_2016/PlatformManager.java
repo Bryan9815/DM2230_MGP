@@ -42,7 +42,7 @@ public class PlatformManager {
             }
             Position.a -= 500 * dt;
 
-            if (player_y <= (int)Position.b - 5 && player_y > (int)Position.b - 25)
+            if (player_y <= (int)Position.b - 108/2 && player_y > (int)Position.b - (108/2) - 5)
             {
                 if (player_x >= Position.a - length/2 && player_x <= Position.a + length/2)
                 {
@@ -67,7 +67,7 @@ public class PlatformManager {
             Randomiser rand = new Randomiser();
             float LowRange = Platform_X - PlatformLength/2;
             float HighRange = Platform_X + PlatformLength/2;
-            Position = new Vector3(rand.getRandomFloat(LowRange, HighRange), Platform_Y - 108, 0.f);
+            Position = new Vector3(rand.getRandomFloat(LowRange, HighRange), Platform_Y, 0.f);
         }
 
         public void Update(double dt, int player_x, int player_y)
@@ -138,10 +138,10 @@ public class PlatformManager {
             Candy temp2 = new Candy();
             temp.Init(ScreenWidth,ScreenHeight, Length);
             PlatformList.add(temp);
-            temp2.Init(Length, temp.Position.a, temp.Position.b - ScreenHeight/20);
+            temp2.Init(Length, temp.Position.a, temp.Position.b - (float)(108/2));
             CandyList.add(temp2);
             Obstacle obstacle = new Obstacle();
-            obstacle.Init(Length, temp.Position.a, temp.Position.b - ScreenHeight/20 - 108);
+            obstacle.Init(Length, temp.Position.a, temp.Position.b - ScreenHeight/20 - (108/2));
             ObstacleList.add(obstacle);
         }
         boolean temp = false;
