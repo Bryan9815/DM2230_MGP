@@ -138,10 +138,10 @@ public class PlatformManager {
             Candy temp2 = new Candy();
             temp.Init(ScreenWidth,ScreenHeight, Length);
             PlatformList.add(temp);
-            temp2.Init(Length, temp.Position.a, temp.Position.b - (float)(108/2));
+            temp2.Init(Length, temp.Position.a, temp.Position.b - ScreenHeight/20 - (float)(108/2));
             CandyList.add(temp2);
             Obstacle obstacle = new Obstacle();
-            obstacle.Init(Length, temp.Position.a, temp.Position.b - ScreenHeight/20 - (108/2));
+            obstacle.Init(Length, temp.Position.a, temp.Position.b - ScreenHeight/20 - (float)(108/2));
             ObstacleList.add(obstacle);
         }
         boolean temp = false;
