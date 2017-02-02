@@ -474,15 +474,15 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
                     int gravity = (ScreenHeight/6) / 4;
                     velocity_y += gravity * 0.3333;
-                    if(velocity_y > 20)
+                    if(velocity_y > 25)
                     {
-                        velocity_y = 20;
+                        velocity_y = 25;
                     }
                     if (!OnGround && HangTime <= 0)
                         charPosY += velocity_y * 0.3333;
                     if(Jump)
                     {
-                        velocity_y -= ScreenHeight/6;
+                        velocity_y -= ScreenHeight/4;
                         Jump = false;
                     }
                     if(charPosY >= ScreenHeight)
