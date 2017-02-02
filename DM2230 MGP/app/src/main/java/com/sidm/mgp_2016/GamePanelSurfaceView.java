@@ -542,7 +542,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             {
                 canvas.drawBitmap(scaledbg, bgX, bgY, null);
                 canvas.drawBitmap(scaledbg, bgX + ScreenWidth, bgY, null);
-                RenderPause(canvas);
                 RenderPlatforms(canvas);
                 RenderObstacles(canvas);
                 RenderCandy(canvas);
@@ -554,13 +553,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
                 canvas.drawBitmap(JumpButton, jbPosX, jbPosY, null);
                 canvas.drawBitmap(FallButton, fbPosX, fbPosY, null);
-
                 //FPS
                 RenderTextOnScreen(canvas, "FPS: " + FPS, 130, 75, 30);
                 // Score
                 RenderTextOnScreen(canvas,"Score: " + Integer.toString(Score),130, 105, 30);
-                //Touch position
-                RenderTextOnScreen(canvas, "X: " + Short.toString(touch_x) + "   Y:" + Short.toString(touch_y), 130, 135, 30);
+                RenderPause(canvas);
                 /*
 
                 //Timer

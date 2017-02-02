@@ -13,6 +13,7 @@ Bryan
 	Toasts (Message "Energy restored!" appears when collecting Energy Potion)
 	Alerts (Pops up when the player dies or runs out of energy, keys in Player Name for High Score system)
 	Pause feature
+	Scrolling background
 	
 Guan Hui
 	Sprite animation
@@ -27,4 +28,4 @@ Guan Hui
 		Collision
 			Player loses energy whenever he collides with a coin
 	Vibration
-	
+	Audio
