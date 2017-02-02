@@ -220,7 +220,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         //Obstacle
         obstacle = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.spike)), (int) (ScreenWidth)/14, (int) (ScreenWidth)/14, true);
-        origin = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.point),(int) ScreenWidth/50,(int)ScreenWidth/50,true );
     }
 
     private void Sound_Init() // Done by Guan Hui
@@ -581,7 +580,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             float x = Platform_Manager.PlatformList.get(i).Position.a - PlatformImage.getWidth()/2,
                 y = Platform_Manager.PlatformList.get(i).Position.b - PlatformImage.getHeight()/2;
             RenderOnScreen(canvas,PlatformImage,x,y,0,1,1);
-            //RenderOnScreen(canvas, origin,Platform_Manager.PlatformList.get(i).Position.a,Platform_Manager.PlatformList.get(i).Position.b,0,1,1);
         }
     }
 
@@ -592,7 +590,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             float x = Platform_Manager.ObstacleList.get(i).Position.a - obstacle.getWidth()/2,
                     y = Platform_Manager.ObstacleList.get(i).Position.b - obstacle.getHeight()/2;
             RenderOnScreen(canvas,obstacle,x,y,0,1,1);
-            RenderOnScreen(canvas, origin,Platform_Manager.ObstacleList.get(i).Position.a,Platform_Manager.ObstacleList.get(i).Position.b,0,1,1);
         }
     }
 
