@@ -5,7 +5,7 @@ import java.util.Vector;
 /**
  * Created bb guanhui1998 on 18/1/2017.
  */
-
+// made by guan hui
 public class Vector3 {
 
     public float a,b,c;

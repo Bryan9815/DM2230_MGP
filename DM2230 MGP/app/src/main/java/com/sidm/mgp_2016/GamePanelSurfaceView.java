@@ -131,11 +131,11 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private Bitmap PauseB1, PauseB2;
     boolean isPaused = false;
 
-    //Platforms
+    //Platforms Done by guan hui
     PlatformManager Platform_Manager;
     private Bitmap origin;
 
-    //Obstacles
+    //Obstacles Done by guan hui
     private Bitmap obstacle;
 
     // Done by guan hui-------------------------------------------
@@ -185,7 +185,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE); // Done by Guan Hui
 
         // Done by Bryan
-        // *****************************************************************************************
         Score = 0;
         GameState = 0;
         MaxEnergy = 1000;
@@ -205,7 +204,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         Char[3] = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.ship2_4)), (int) (ScreenWidth) / 10, (int) (ScreenHeight) / 10, true);
         JumpButton = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.jump_button)), (int)(ScreenWidth) / 10, (int) (ScreenWidth) / 10, true);
         FallButton = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.fall_button)), (int)(ScreenWidth) / 10, (int) (ScreenWidth) / 10, true);
-        PlatformImage = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.platform)), 930, 108, true);
+        PlatformImage = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.platform)), 930, 108, true);//Done by guan hui
         PauseB1 = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.pause1)), (ScreenWidth/15), (ScreenHeight/10), true);
         PauseB2 = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.pause2)), (ScreenWidth/15), (ScreenHeight/10), true);
         EnergyPotion = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.potion)), (ScreenWidth/15), (ScreenWidth/15), true);
@@ -214,14 +213,15 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         EnergyBarIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_icon),(int) ScreenWidth/20,(int)ScreenWidth/20,true );
         EnergyBar = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_bar),(int) ScreenWidth/20,(int)ScreenHeight/20,true );
         EnergyBarShadow = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.health_bar_shadow),(int) ScreenWidth/20,(int)ScreenHeight/20,true );
-        // Platform Manager
+        // *****************************************************************************************
+
+        // Platform Manager //Done by guan hui
         Platform_Manager = new PlatformManager(ScreenWidth,ScreenHeight,PlatformImage.getWidth());
         Platform_Manager.Init();
 
-        //Obstacle
+        //Obstacle //Done by guan hui
         obstacle = Bitmap.createScaledBitmap((BitmapFactory.decodeResource(getResources(), R.drawable.spike)), (int) (ScreenWidth)/14, (int) (ScreenWidth)/14, true);
     }
-
     private void Sound_Init() // Done by Guan Hui
     {
         BGM = MediaPlayer.create(getContext(),R.raw.kasger_reflections);
@@ -438,7 +438,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                         epPosX = ScreenWidth * 2;
 
                     // Character
-                    for(int i = 0; i < Platform_Manager.CandyList.size(); i++) // Collision with candies
+                    for(int i = 0; i < Platform_Manager.CandyList.size(); i++) // Collision with candies //Done by guan hui
                     {
                         if (CheckAABBCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), (int)Platform_Manager.CandyList.get(i).Position.a, (int)Platform_Manager.CandyList.get(i).Position.b, Coin_Anim.getSpriteWidth(), Coin_Anim.getSpriteHeight()))
                         {
@@ -455,7 +455,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                         epSpawned = false;
                     }
 
-                    for(int i = 0; i < Platform_Manager.ObstacleList.size(); i++) // Collision with candies
+                    for(int i = 0; i < Platform_Manager.ObstacleList.size(); i++) // Collision with obstacles //Done by guan hui
                     {
                         if (CheckAABBCollision(charPosX, charPosY, Char[CharIndex].getWidth(), Char[CharIndex].getHeight(), (int)Platform_Manager.ObstacleList.get(i).Position.a, (int)Platform_Manager.ObstacleList.get(i).Position.b, obstacle.getWidth(), obstacle.getHeight()))
                         {
@@ -464,7 +464,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                         }
                     }
 
-                    OnGround = Platform_Manager.Update(dt,charPosX, charPosY + Char[CharIndex].getHeight()/2);
+                    OnGround = Platform_Manager.Update(dt,charPosX, charPosY + Char[CharIndex].getHeight()/2); //Done by guan hui
                     if (velocity_y <= 0 && OnGround)
                     {
                         OnGround = false;
@@ -527,7 +527,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
     }
 
-    public void RenderGameplay(Canvas canvas)
+    public void RenderGameplay(Canvas canvas) //Done by guan hui
     {
         // 3) Re-draw 2nd image after the 1st image ends
         if (canvas == null)
@@ -570,7 +570,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
     }
 
-    private void RenderPlatforms(Canvas canvas)
+    private void RenderPlatforms(Canvas canvas) //Done by guan hui
     {
         for (int i = 0; i < Platform_Manager.PlatformList.size(); i++)
         {
@@ -580,7 +580,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
     }
 
-    private void RenderObstacles(Canvas canvas)
+    private void RenderObstacles(Canvas canvas) //Done by guan hui
     {
         for (int i = 0; i < Platform_Manager.ObstacleList.size(); i++)
         {
@@ -590,7 +590,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
     }
 
-    private void RenderCandy(Canvas canvas)
+    private void RenderCandy(Canvas canvas) //Done by guan hui
     {
         for(int i = 0; i < Platform_Manager.CandyList.size(); i++)
         {
@@ -611,7 +611,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     }
 
 
-    public void RenderOnScreen(Canvas canvas,Bitmap bitmap,float translate_x,float translate_y, float rotate_degrees, float scale_x,float scale_y )
+    public void RenderOnScreen(Canvas canvas,Bitmap bitmap,float translate_x,float translate_y, float rotate_degrees, float scale_x,float scale_y ) //Done by guan hui
     {
         canvas.save();
         canvas.translate(translate_x,translate_y);
@@ -621,7 +621,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         canvas.restore();
     }
 
-    public void RenderOnScreen(Canvas canvas,SpriteAnimation spriteAnimation,float translate_x,float translate_y, float rotate_degrees, float scale_x,float scale_y )
+    public void RenderOnScreen(Canvas canvas,SpriteAnimation spriteAnimation,float translate_x,float translate_y, float rotate_degrees, float scale_x,float scale_y ) //Done by guan hui
     {
         canvas.save();
         canvas.translate(translate_x,translate_y);
@@ -664,7 +664,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         return false;
     }
 
-    public boolean CheckSphericalCollision (float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2)
+    public boolean CheckSphericalCollision (float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2) //Done by guan hui
     {
         //aabb collision
 //        float dist_x = Math.abs(x1 - x2);
@@ -682,7 +682,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         return false;
     }
 
-    public boolean CheckAABBCollision (float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2)
+    public boolean CheckAABBCollision (float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2) //Done by guan hui
     {
         //aabb collision
         float dist_x = Math.abs(x1 - x2);

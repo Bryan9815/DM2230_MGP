@@ -7,7 +7,7 @@ import java.util.Vector;
 /**
  * Created by guanhui1998 on 19/1/2017.
  */
-
+// Done by guan hui
 public class PlatformManager {
 
     GamePanelSurfaceView GamePanel;

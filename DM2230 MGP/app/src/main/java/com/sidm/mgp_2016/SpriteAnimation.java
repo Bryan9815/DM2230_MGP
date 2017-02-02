@@ -3,7 +3,7 @@ package com.sidm.mgp_2016;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-
+//made by guan hui
 public class SpriteAnimation
 {
 
