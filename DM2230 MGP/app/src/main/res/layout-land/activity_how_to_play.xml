@@ -26,13 +26,7 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:text="The goal of the game is to survive for as long as possible and collect as much candy as you can along the way.
-
-The game ends when you either run out of energy or fall off the bottom of the screen.
-
-Running into spikes cause you to lose energy, and picking up the potions that spawn every once in a while will replenish your energy.
-
-The Fall Button will let you drop down from the platform that you are currently running on, and the Jump Button will let you jump ONLY while you are on the ground."
+        android:text="The goal of the game is to survive for as long as possible and collect as much candy as you can along the way."
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -40,5 +34,32 @@ The Fall Button will let you drop down from the platform that you are currently 
         android:layout_marginStart="30dp"
         android:layout_marginTop="19dp"
         android:id="@+id/textView" />
+
+    <TextView
+        android:text="Running into spikes cause you to lose energy, and picking up the potions that spawn every once in a while will replenish your energy."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView2"
+        android:layout_alignStart="@+id/textView2"
+        android:layout_marginTop="15dp"
+        android:id="@+id/textView3" />
+
+    <TextView
+        android:text="The Fall Button will let you drop down from the platform that you are currently running on, and the Jump Button will let you jump ONLY while you are on the ground."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView3"
+        android:layout_alignStart="@+id/textView3"
+        android:layout_marginTop="21dp"
+        android:id="@+id/textView4" />
+
+    <TextView
+        android:text="The game ends when you either run out of energy or fall off the bottom of the screen."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:id="@+id/textView2"
+        android:layout_below="@+id/textView"
+        android:layout_alignStart="@+id/textView" />
 
 </RelativeLayout>
