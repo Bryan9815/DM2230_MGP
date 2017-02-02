@@ -465,7 +465,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     }
 
                     OnGround = Platform_Manager.Update(dt,charPosX, charPosY + Char[CharIndex].getHeight()/2);
-                    if (velocity_y <= 1 && OnGround)
+                    if (velocity_y <= 0 && OnGround)
                     {
                         OnGround = false;
                     }
@@ -478,7 +478,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     {
                         velocity_y = 20;
                     }
-                    if (!OnGround && HangTime < 0)
+                    if (!OnGround && HangTime <= 0)
                         charPosY += velocity_y * 0.3333;
                     if(Jump)
                     {

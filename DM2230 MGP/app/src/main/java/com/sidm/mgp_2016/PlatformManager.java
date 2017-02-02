@@ -42,7 +42,7 @@ public class PlatformManager {
             }
             Position.a -= 500 * dt;
 
-            if (player_y <= (int)Position.b - 108/2 && player_y > (int)Position.b - (108/2) - 5)
+            if (player_y <= (int)Position.b - 108/2 && player_y > (int)Position.b - (108/2) - 9)
             {
                 if (player_x >= Position.a - length/2 - ScreenWidth/20 && player_x <= Position.a + length/2 + ScreenWidth/20)
                 {
